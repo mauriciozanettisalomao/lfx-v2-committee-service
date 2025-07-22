@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-    title: Goa API
+    title: Committee Management Service
     version: 0.0.1
 servers:
     - url: http://localhost:80
