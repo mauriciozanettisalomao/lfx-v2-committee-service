@@ -1,0 +1,765 @@
+swagger: "2.0"
+info:
+    title: ""
+    version: 0.0.1
+host: localhost:80
+consumes:
+    - application/json
+    - application/xml
+    - application/gob
+produces:
+    - application/json
+    - application/xml
+    - application/gob
+paths:
+    /committees:
+        post:
+            tags:
+                - committee
+            summary: create-committee committee
+            description: Create Committee
+            operationId: committee#create-committee
+            parameters:
+                - name: v
+                  in: query
+                  description: Version of the API
+                  required: false
+                  type: string
+                  enum:
+                    - "1"
+                - name: Authorization
+                  in: header
+                  description: JWT token issued by Heimdall
+                  required: false
+                  type: string
+                - name: Create-CommitteeRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CommitteeCreateCommitteeRequestBody'
+                    required:
+                        - name
+                        - category
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/Committee'
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        $ref: '#/definitions/BadRequestError'
+                        required:
+                            - message
+                "409":
+                    description: Conflict response.
+                    schema:
+                        $ref: '#/definitions/ConflictError'
+                        required:
+                            - message
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        $ref: '#/definitions/InternalServerError'
+                        required:
+                            - message
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        $ref: '#/definitions/ServiceUnavailableError'
+                        required:
+                            - message
+            schemes:
+                - http
+            security:
+                - jwt_header_Authorization: []
+    /committees/{id}:
+        get:
+            tags:
+                - committee
+            summary: get-committee committee
+            description: Get Committee
+            operationId: committee#get-committee
+            parameters:
+                - name: v
+                  in: query
+                  description: Version of the API
+                  required: false
+                  type: string
+                  enum:
+                    - "1"
+                - name: id
+                  in: path
+                  description: Committee ID
+                  required: true
+                  type: string
+                  format: uuid
+                - name: Authorization
+                  in: header
+                  description: JWT token issued by Heimdall
+                  required: false
+                  type: string
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/CommitteeGetCommitteeResponseBody'
+                    headers:
+                        ETag:
+                            description: ETag header value
+                            type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/NotFoundError'
+                        required:
+                            - message
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        $ref: '#/definitions/InternalServerError'
+                        required:
+                            - message
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        $ref: '#/definitions/ServiceUnavailableError'
+                        required:
+                            - message
+            schemes:
+                - http
+            security:
+                - jwt_header_Authorization: []
+        put:
+            tags:
+                - committee
+            summary: update-committee committee
+            description: Update Committee
+            operationId: committee#update-committee
+            parameters:
+                - name: v
+                  in: query
+                  description: Version of the API
+                  required: false
+                  type: string
+                  enum:
+                    - "1"
+                - name: id
+                  in: path
+                  description: Committee ID
+                  required: true
+                  type: string
+                  format: uuid
+                - name: Authorization
+                  in: header
+                  description: JWT token issued by Heimdall
+                  required: false
+                  type: string
+                - name: ETag
+                  in: header
+                  description: ETag header value
+                  required: false
+                  type: string
+                - name: Update-CommitteeRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CommitteeUpdateCommitteeRequestBody'
+                    required:
+                        - name
+                        - category
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/Committee'
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        $ref: '#/definitions/BadRequestError'
+                        required:
+                            - message
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/NotFoundError'
+                        required:
+                            - message
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        $ref: '#/definitions/InternalServerError'
+                        required:
+                            - message
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        $ref: '#/definitions/ServiceUnavailableError'
+                        required:
+                            - message
+            schemes:
+                - http
+            security:
+                - jwt_header_Authorization: []
+        delete:
+            tags:
+                - committee
+            summary: delete-committee committee
+            description: Delete Committee
+            operationId: committee#delete-committee
+            parameters:
+                - name: v
+                  in: query
+                  description: Version of the API
+                  required: false
+                  type: string
+                  enum:
+                    - "1"
+                - name: id
+                  in: path
+                  description: Committee ID
+                  required: true
+                  type: string
+                  format: uuid
+                - name: Authorization
+                  in: header
+                  description: JWT token issued by Heimdall
+                  required: false
+                  type: string
+                - name: ETag
+                  in: header
+                  description: ETag header value
+                  required: false
+                  type: string
+            responses:
+                "204":
+                    description: No Content response.
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        $ref: '#/definitions/BadRequestError'
+                        required:
+                            - message
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/NotFoundError'
+                        required:
+                            - message
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        $ref: '#/definitions/InternalServerError'
+                        required:
+                            - message
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        $ref: '#/definitions/ServiceUnavailableError'
+                        required:
+                            - message
+            schemes:
+                - http
+            security:
+                - jwt_header_Authorization: []
+    /livez:
+        get:
+            tags:
+                - committee
+            summary: livez committee
+            description: Check if the service is alive.
+            operationId: committee#livez
+            produces:
+                - text/plain
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: string
+                        format: byte
+            schemes:
+                - http
+    /openapi.json:
+        get:
+            tags:
+                - committee
+            summary: Download gen/http/openapi3.json
+            operationId: committee#/openapi.json
+            responses:
+                "200":
+                    description: File downloaded
+                    schema:
+                        type: file
+            schemes:
+                - http
+    /readyz:
+        get:
+            tags:
+                - committee
+            summary: readyz committee
+            description: Check if the service is able to take inbound requests.
+            operationId: committee#readyz
+            produces:
+                - text/plain
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: string
+                        format: byte
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        $ref: '#/definitions/ServiceUnavailableError'
+                        required:
+                            - message
+            schemes:
+                - http
+definitions:
+    BadRequestError:
+        title: BadRequestError
+        type: object
+        properties:
+            message:
+                type: string
+                description: Error message
+                example: The request was invalid.
+        description: Bad request
+        example:
+            message: The request was invalid.
+        required:
+            - message
+    Committee:
+        title: Committee
+        type: object
+        properties:
+            business_email_required:
+                type: boolean
+                description: Whether business email is required for committee members
+                default: false
+                example: false
+            category:
+                type: string
+                description: The category of the committee
+                example: Technical Steering Committee
+                enum:
+                    - Legal Committee
+                    - Finance Committee
+                    - Special Interest Group
+                    - Board
+                    - Technical Oversight Committee/Technical Advisory Committee
+                    - Technical Steering Committee
+                    - Marketing Oversight Committee/Marketing Advisory Committee
+                    - Marketing Committee/Sub Committee
+                    - Code of Conduct
+                    - Product Security
+                    - Technical Mailing List
+                    - Marketing Mailing List
+                    - Working Group
+                    - Committers
+                    - Maintainers
+                    - Ambassador
+                    - Government Advisory Council
+                    - Expert Group
+                    - Other
+            description:
+                type: string
+                description: The description of the committee
+                example: Main technical oversight committee for the project
+                maxLength: 2000
+            enable_voting:
+                type: boolean
+                description: Whether voting is enabled for this committee
+                default: false
+                example: true
+            id:
+                type: string
+                description: The unique identifier of the committee
+                example: 52ec9e74-e8d3-40d9-953c-bc2d2c6ae516
+                format: uuid
+            is_audit_enabled:
+                type: boolean
+                description: Whether audit logging is enabled for this committee
+                default: false
+                example: false
+            name:
+                type: string
+                description: The name of the committee
+                example: Technical Steering Committee
+                maxLength: 100
+            parent_committee_id:
+                type: string
+                description: The ID of the parent committee, should be empty if there is none
+                example: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+                format: uuid
+            project_id:
+                type: string
+                description: The project identifier this committee belongs to
+                example: a0956000001FwZVAA0
+            public:
+                type: boolean
+                description: Whether the committee is publicly visible
+                default: false
+                example: true
+            public_name:
+                type: string
+                description: The public display name of the committee
+                example: TSC Committee Calendar
+            sso_group_enabled:
+                type: boolean
+                description: Whether SSO group integration is enabled
+                default: false
+                example: true
+            sso_group_name:
+                type: string
+                description: The name of the SSO group
+                example: cncf-technical-steering
+            status:
+                type: string
+                description: The current status of the committee
+                default: active
+                example: active
+                enum:
+                    - active
+                    - inactive
+                    - archived
+            website:
+                type: string
+                description: The website URL of the committee
+                example: https://committee.example.org
+                format: uri
+                pattern: ^(https?://)?[^\s/$.?#].[^\s]*$
+            writers:
+                type: array
+                items:
+                    type: string
+                    example: Ex architecto minima exercitationem.
+                description: Manager user IDs who can edit/modify this committee
+                example:
+                    - manager_user_id1
+                    - manager_user_id2
+        example:
+            business_email_required: false
+            category: Technical Steering Committee
+            description: Main technical oversight committee for the project
+            enable_voting: true
+            id: 52ec9e74-e8d3-40d9-953c-bc2d2c6ae516
+            is_audit_enabled: false
+            name: Technical Steering Committee
+            parent_committee_id: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+            project_id: a0956000001FwZVAA0
+            public: true
+            public_name: TSC Committee Calendar
+            sso_group_enabled: true
+            sso_group_name: cncf-technical-steering
+            status: active
+            website: https://committee.example.org
+            writers:
+                - manager_user_id1
+                - manager_user_id2
+    CommitteeCreateCommitteeRequestBody:
+        title: CommitteeCreateCommitteeRequestBody
+        type: object
+        properties:
+            business_email_required:
+                type: boolean
+                description: Whether business email is required for committee members
+                default: false
+                example: false
+            category:
+                type: string
+                description: The category of the committee
+                example: Technical Steering Committee
+                enum:
+                    - Legal Committee
+                    - Finance Committee
+                    - Special Interest Group
+                    - Board
+                    - Technical Oversight Committee/Technical Advisory Committee
+                    - Technical Steering Committee
+                    - Marketing Oversight Committee/Marketing Advisory Committee
+                    - Marketing Committee/Sub Committee
+                    - Code of Conduct
+                    - Product Security
+                    - Technical Mailing List
+                    - Marketing Mailing List
+                    - Working Group
+                    - Committers
+                    - Maintainers
+                    - Ambassador
+                    - Government Advisory Council
+                    - Expert Group
+                    - Other
+            description:
+                type: string
+                description: The description of the committee
+                example: Main technical oversight committee for the project
+                maxLength: 2000
+            enable_voting:
+                type: boolean
+                description: Whether voting is enabled for this committee
+                default: false
+                example: true
+            is_audit_enabled:
+                type: boolean
+                description: Whether audit logging is enabled for this committee
+                default: false
+                example: false
+            name:
+                type: string
+                description: The name of the committee
+                example: Technical Steering Committee
+                maxLength: 100
+            parent_committee_id:
+                type: string
+                description: The ID of the parent committee, should be empty if there is none
+                example: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+                format: uuid
+            public:
+                type: boolean
+                description: Whether the committee is publicly visible
+                default: false
+                example: true
+            public_name:
+                type: string
+                description: The public display name of the committee
+                example: TSC Committee Calendar
+            sso_group_enabled:
+                type: boolean
+                description: Whether SSO group integration is enabled
+                default: false
+                example: true
+            sso_group_name:
+                type: string
+                description: The name of the SSO group
+                example: cncf-technical-steering
+            status:
+                type: string
+                description: The current status of the committee
+                default: active
+                example: active
+                enum:
+                    - active
+                    - inactive
+                    - archived
+            website:
+                type: string
+                description: The website URL of the committee
+                example: https://committee.example.org
+                format: uri
+                pattern: ^(https?://)?[^\s/$.?#].[^\s]*$
+            writers:
+                type: array
+                items:
+                    type: string
+                    example: Animi dicta placeat et quasi.
+                description: Manager user IDs who can edit/modify this committee
+                example:
+                    - manager_user_id1
+                    - manager_user_id2
+        example:
+            business_email_required: false
+            category: Technical Steering Committee
+            description: Main technical oversight committee for the project
+            enable_voting: true
+            is_audit_enabled: false
+            name: Technical Steering Committee
+            parent_committee_id: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+            public: true
+            public_name: TSC Committee Calendar
+            sso_group_enabled: true
+            sso_group_name: cncf-technical-steering
+            status: active
+            website: https://committee.example.org
+            writers:
+                - manager_user_id1
+                - manager_user_id2
+        required:
+            - name
+            - category
+    CommitteeGetCommitteeResponseBody:
+        title: CommitteeGetCommitteeResponseBody
+        $ref: '#/definitions/Committee'
+    CommitteeUpdateCommitteeRequestBody:
+        title: CommitteeUpdateCommitteeRequestBody
+        type: object
+        properties:
+            business_email_required:
+                type: boolean
+                description: Whether business email is required for committee members
+                default: false
+                example: false
+            category:
+                type: string
+                description: The category of the committee
+                example: Technical Steering Committee
+                enum:
+                    - Legal Committee
+                    - Finance Committee
+                    - Special Interest Group
+                    - Board
+                    - Technical Oversight Committee/Technical Advisory Committee
+                    - Technical Steering Committee
+                    - Marketing Oversight Committee/Marketing Advisory Committee
+                    - Marketing Committee/Sub Committee
+                    - Code of Conduct
+                    - Product Security
+                    - Technical Mailing List
+                    - Marketing Mailing List
+                    - Working Group
+                    - Committers
+                    - Maintainers
+                    - Ambassador
+                    - Government Advisory Council
+                    - Expert Group
+                    - Other
+            description:
+                type: string
+                description: The description of the committee
+                example: Main technical oversight committee for the project
+                maxLength: 2000
+            enable_voting:
+                type: boolean
+                description: Whether voting is enabled for this committee
+                default: false
+                example: true
+            is_audit_enabled:
+                type: boolean
+                description: Whether audit logging is enabled for this committee
+                default: false
+                example: false
+            name:
+                type: string
+                description: The name of the committee
+                example: Technical Steering Committee
+                maxLength: 100
+            parent_committee_id:
+                type: string
+                description: The ID of the parent committee, should be empty if there is none
+                example: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+                format: uuid
+            project_id:
+                type: string
+                description: The project identifier this committee belongs to
+                example: a0956000001FwZVAA0
+            public:
+                type: boolean
+                description: Whether the committee is publicly visible
+                default: false
+                example: true
+            public_name:
+                type: string
+                description: The public display name of the committee
+                example: TSC Committee Calendar
+            sso_group_enabled:
+                type: boolean
+                description: Whether SSO group integration is enabled
+                default: false
+                example: true
+            sso_group_name:
+                type: string
+                description: The name of the SSO group
+                example: cncf-technical-steering
+            status:
+                type: string
+                description: The current status of the committee
+                default: active
+                example: active
+                enum:
+                    - active
+                    - inactive
+                    - archived
+            website:
+                type: string
+                description: The website URL of the committee
+                example: https://committee.example.org
+                format: uri
+                pattern: ^(https?://)?[^\s/$.?#].[^\s]*$
+            writers:
+                type: array
+                items:
+                    type: string
+                    example: Maxime facilis laudantium ut quam quisquam et.
+                description: Manager user IDs who can edit/modify this committee
+                example:
+                    - manager_user_id1
+                    - manager_user_id2
+        example:
+            business_email_required: false
+            category: Technical Steering Committee
+            description: Main technical oversight committee for the project
+            enable_voting: true
+            is_audit_enabled: false
+            name: Technical Steering Committee
+            parent_committee_id: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+            project_id: a0956000001FwZVAA0
+            public: true
+            public_name: TSC Committee Calendar
+            sso_group_enabled: true
+            sso_group_name: cncf-technical-steering
+            status: active
+            website: https://committee.example.org
+            writers:
+                - manager_user_id1
+                - manager_user_id2
+        required:
+            - name
+            - category
+    ConflictError:
+        title: ConflictError
+        type: object
+        properties:
+            message:
+                type: string
+                description: Error message
+                example: The resource already exists.
+        description: Conflict
+        example:
+            message: The resource already exists.
+        required:
+            - message
+    InternalServerError:
+        title: InternalServerError
+        type: object
+        properties:
+            message:
+                type: string
+                description: Error message
+                example: An internal server error occurred.
+        description: Internal server error
+        example:
+            message: An internal server error occurred.
+        required:
+            - message
+    NotFoundError:
+        title: NotFoundError
+        type: object
+        properties:
+            message:
+                type: string
+                description: Error message
+                example: The resource was not found.
+        description: Resource not found
+        example:
+            message: The resource was not found.
+        required:
+            - message
+    ServiceUnavailableError:
+        title: ServiceUnavailableError
+        type: object
+        properties:
+            message:
+                type: string
+                description: Error message
+                example: The service is unavailable.
+        description: Service unavailable
+        example:
+            message: The service is unavailable.
+        required:
+            - message
+securityDefinitions:
+    jwt_header_Authorization:
+        type: apiKey
+        description: Heimdall authorization
+        name: Authorization
+        in: header
