@@ -163,10 +163,10 @@ type GetCommitteeResult struct {
 type UpdateCommitteePayload struct {
 	// JWT token issued by Heimdall
 	BearerToken *string
-	// ETag header value
-	Etag *string
 	// Version of the API
 	Version *string
+	// ETag header value
+	Etag *string
 	// Committee ID
 	ID *string
 	// The project identifier this committee belongs to
