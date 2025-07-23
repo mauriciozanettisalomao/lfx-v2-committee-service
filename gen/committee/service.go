@@ -73,8 +73,6 @@ type Committee struct {
 	BusinessEmailRequired bool
 	// Whether SSO group integration is enabled
 	SsoGroupEnabled bool
-	// The name of the SSO group
-	SsoGroupName *string
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool
 	// Whether the committee is publicly visible
@@ -110,8 +108,6 @@ type CreateCommitteePayload struct {
 	BusinessEmailRequired bool
 	// Whether SSO group integration is enabled
 	SsoGroupEnabled bool
-	// The name of the SSO group
-	SsoGroupName *string
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool
 	// Whether the committee is publicly visible
@@ -185,8 +181,6 @@ type UpdateCommitteePayload struct {
 	BusinessEmailRequired bool
 	// Whether SSO group integration is enabled
 	SsoGroupEnabled bool
-	// The name of the SSO group
-	SsoGroupName *string
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool
 	// Whether the committee is publicly visible
@@ -195,8 +189,6 @@ type UpdateCommitteePayload struct {
 	PublicName *string
 	// The ID of the parent committee, should be empty if there is none
 	ParentCommitteeID *string
-	// The current status of the committee
-	Status string
 	// Manager user IDs who can edit/modify this committee
 	Writers []string
 }
