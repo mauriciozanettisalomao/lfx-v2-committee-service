@@ -343,25 +343,25 @@ definitions:
                 description: The category of the committee
                 example: Technical Steering Committee
                 enum:
-                    - Legal Committee
-                    - Finance Committee
-                    - Special Interest Group
+                    - Ambassador
                     - Board
+                    - Code of Conduct
+                    - Committers
+                    - Expert Group
+                    - Finance Committee
+                    - Government Advisory Council
+                    - Legal Committee
+                    - Maintainers
+                    - Marketing Committee/Sub Committee
+                    - Marketing Mailing List
+                    - Marketing Oversight Committee/Marketing Advisory Committee
+                    - Other
+                    - Product Security
+                    - Special Interest Group
+                    - Technical Mailing List
                     - Technical Oversight Committee/Technical Advisory Committee
                     - Technical Steering Committee
-                    - Marketing Oversight Committee/Marketing Advisory Committee
-                    - Marketing Committee/Sub Committee
-                    - Code of Conduct
-                    - Product Security
-                    - Technical Mailing List
-                    - Marketing Mailing List
                     - Working Group
-                    - Committers
-                    - Maintainers
-                    - Ambassador
-                    - Government Advisory Council
-                    - Expert Group
-                    - Other
             description:
                 type: string
                 description: The description of the committee
@@ -410,15 +410,6 @@ definitions:
                 description: Whether SSO group integration is enabled
                 default: false
                 example: true
-            status:
-                type: string
-                description: The current status of the committee
-                default: active
-                example: active
-                enum:
-                    - active
-                    - inactive
-                    - archived
             website:
                 type: string
                 description: The website URL of the committee
@@ -447,7 +438,6 @@ definitions:
             public: true
             public_name: TSC Committee Calendar
             sso_group_enabled: true
-            status: active
             website: https://committee.example.org
             writers:
                 - manager_user_id1
@@ -466,25 +456,25 @@ definitions:
                 description: The category of the committee
                 example: Technical Steering Committee
                 enum:
-                    - Legal Committee
-                    - Finance Committee
-                    - Special Interest Group
+                    - Ambassador
                     - Board
+                    - Code of Conduct
+                    - Committers
+                    - Expert Group
+                    - Finance Committee
+                    - Government Advisory Council
+                    - Legal Committee
+                    - Maintainers
+                    - Marketing Committee/Sub Committee
+                    - Marketing Mailing List
+                    - Marketing Oversight Committee/Marketing Advisory Committee
+                    - Other
+                    - Product Security
+                    - Special Interest Group
+                    - Technical Mailing List
                     - Technical Oversight Committee/Technical Advisory Committee
                     - Technical Steering Committee
-                    - Marketing Oversight Committee/Marketing Advisory Committee
-                    - Marketing Committee/Sub Committee
-                    - Code of Conduct
-                    - Product Security
-                    - Technical Mailing List
-                    - Marketing Mailing List
                     - Working Group
-                    - Committers
-                    - Maintainers
-                    - Ambassador
-                    - Government Advisory Council
-                    - Expert Group
-                    - Other
             description:
                 type: string
                 description: The description of the committee
@@ -524,15 +514,6 @@ definitions:
                 description: Whether SSO group integration is enabled
                 default: false
                 example: true
-            status:
-                type: string
-                description: The current status of the committee
-                default: active
-                example: active
-                enum:
-                    - active
-                    - inactive
-                    - archived
             website:
                 type: string
                 description: The website URL of the committee
@@ -559,7 +540,6 @@ definitions:
             public: true
             public_name: TSC Committee Calendar
             sso_group_enabled: true
-            status: active
             website: https://committee.example.org
             writers:
                 - manager_user_id1
@@ -584,25 +564,25 @@ definitions:
                 description: The category of the committee
                 example: Technical Steering Committee
                 enum:
-                    - Legal Committee
-                    - Finance Committee
-                    - Special Interest Group
+                    - Ambassador
                     - Board
+                    - Code of Conduct
+                    - Committers
+                    - Expert Group
+                    - Finance Committee
+                    - Government Advisory Council
+                    - Legal Committee
+                    - Maintainers
+                    - Marketing Committee/Sub Committee
+                    - Marketing Mailing List
+                    - Marketing Oversight Committee/Marketing Advisory Committee
+                    - Other
+                    - Product Security
+                    - Special Interest Group
+                    - Technical Mailing List
                     - Technical Oversight Committee/Technical Advisory Committee
                     - Technical Steering Committee
-                    - Marketing Oversight Committee/Marketing Advisory Committee
-                    - Marketing Committee/Sub Committee
-                    - Code of Conduct
-                    - Product Security
-                    - Technical Mailing List
-                    - Marketing Mailing List
                     - Working Group
-                    - Committers
-                    - Maintainers
-                    - Ambassador
-                    - Government Advisory Council
-                    - Expert Group
-                    - Other
             description:
                 type: string
                 description: The description of the committee

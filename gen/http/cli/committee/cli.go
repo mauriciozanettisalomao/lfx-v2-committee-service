@@ -40,7 +40,6 @@ func UsageExamples() string {
       "public": true,
       "public_name": "TSC Committee Calendar",
       "sso_group_enabled": true,
-      "status": "active",
       "website": "https://committee.example.org",
       "writers": [
          "manager_user_id1",
@@ -239,7 +238,6 @@ Example:
       "public": true,
       "public_name": "TSC Committee Calendar",
       "sso_group_enabled": true,
-      "status": "active",
       "website": "https://committee.example.org",
       "writers": [
          "manager_user_id1",
