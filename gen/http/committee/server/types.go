@@ -32,8 +32,6 @@ type CreateCommitteeRequestBody struct {
 	BusinessEmailRequired *bool `form:"business_email_required,omitempty" json:"business_email_required,omitempty" xml:"business_email_required,omitempty"`
 	// Whether SSO group integration is enabled
 	SsoGroupEnabled *bool `form:"sso_group_enabled,omitempty" json:"sso_group_enabled,omitempty" xml:"sso_group_enabled,omitempty"`
-	// The name of the SSO group
-	SsoGroupName *string `form:"sso_group_name,omitempty" json:"sso_group_name,omitempty" xml:"sso_group_name,omitempty"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled *bool `form:"is_audit_enabled,omitempty" json:"is_audit_enabled,omitempty" xml:"is_audit_enabled,omitempty"`
 	// Whether the committee is publicly visible
@@ -67,8 +65,6 @@ type UpdateCommitteeRequestBody struct {
 	BusinessEmailRequired *bool `form:"business_email_required,omitempty" json:"business_email_required,omitempty" xml:"business_email_required,omitempty"`
 	// Whether SSO group integration is enabled
 	SsoGroupEnabled *bool `form:"sso_group_enabled,omitempty" json:"sso_group_enabled,omitempty" xml:"sso_group_enabled,omitempty"`
-	// The name of the SSO group
-	SsoGroupName *string `form:"sso_group_name,omitempty" json:"sso_group_name,omitempty" xml:"sso_group_name,omitempty"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled *bool `form:"is_audit_enabled,omitempty" json:"is_audit_enabled,omitempty" xml:"is_audit_enabled,omitempty"`
 	// Whether the committee is publicly visible
@@ -77,8 +73,6 @@ type UpdateCommitteeRequestBody struct {
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
 	ParentCommitteeID *string `form:"parent_committee_id,omitempty" json:"parent_committee_id,omitempty" xml:"parent_committee_id,omitempty"`
-	// The current status of the committee
-	Status *string `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
 	// Manager user IDs who can edit/modify this committee
 	Writers []string `form:"writers,omitempty" json:"writers,omitempty" xml:"writers,omitempty"`
 }
@@ -104,8 +98,6 @@ type CreateCommitteeResponseBody struct {
 	BusinessEmailRequired bool `form:"business_email_required" json:"business_email_required" xml:"business_email_required"`
 	// Whether SSO group integration is enabled
 	SsoGroupEnabled bool `form:"sso_group_enabled" json:"sso_group_enabled" xml:"sso_group_enabled"`
-	// The name of the SSO group
-	SsoGroupName *string `form:"sso_group_name,omitempty" json:"sso_group_name,omitempty" xml:"sso_group_name,omitempty"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool `form:"is_audit_enabled" json:"is_audit_enabled" xml:"is_audit_enabled"`
 	// Whether the committee is publicly visible
@@ -145,8 +137,6 @@ type UpdateCommitteeResponseBody struct {
 	BusinessEmailRequired bool `form:"business_email_required" json:"business_email_required" xml:"business_email_required"`
 	// Whether SSO group integration is enabled
 	SsoGroupEnabled bool `form:"sso_group_enabled" json:"sso_group_enabled" xml:"sso_group_enabled"`
-	// The name of the SSO group
-	SsoGroupName *string `form:"sso_group_name,omitempty" json:"sso_group_name,omitempty" xml:"sso_group_name,omitempty"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool `form:"is_audit_enabled" json:"is_audit_enabled" xml:"is_audit_enabled"`
 	// Whether the committee is publicly visible
@@ -301,8 +291,6 @@ type CommitteeResponseBody struct {
 	BusinessEmailRequired bool `form:"business_email_required" json:"business_email_required" xml:"business_email_required"`
 	// Whether SSO group integration is enabled
 	SsoGroupEnabled bool `form:"sso_group_enabled" json:"sso_group_enabled" xml:"sso_group_enabled"`
-	// The name of the SSO group
-	SsoGroupName *string `form:"sso_group_name,omitempty" json:"sso_group_name,omitempty" xml:"sso_group_name,omitempty"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool `form:"is_audit_enabled" json:"is_audit_enabled" xml:"is_audit_enabled"`
 	// Whether the committee is publicly visible
@@ -330,7 +318,6 @@ func NewCreateCommitteeResponseBody(res *committee.Committee) *CreateCommitteeRe
 		EnableVoting:          res.EnableVoting,
 		BusinessEmailRequired: res.BusinessEmailRequired,
 		SsoGroupEnabled:       res.SsoGroupEnabled,
-		SsoGroupName:          res.SsoGroupName,
 		IsAuditEnabled:        res.IsAuditEnabled,
 		Public:                res.Public,
 		PublicName:            res.PublicName,
@@ -395,7 +382,6 @@ func NewGetCommitteeResponseBody(res *committee.GetCommitteeResult) *GetCommitte
 		EnableVoting:          res.Committee.EnableVoting,
 		BusinessEmailRequired: res.Committee.BusinessEmailRequired,
 		SsoGroupEnabled:       res.Committee.SsoGroupEnabled,
-		SsoGroupName:          res.Committee.SsoGroupName,
 		IsAuditEnabled:        res.Committee.IsAuditEnabled,
 		Public:                res.Committee.Public,
 		PublicName:            res.Committee.PublicName,
@@ -460,7 +446,6 @@ func NewUpdateCommitteeResponseBody(res *committee.Committee) *UpdateCommitteeRe
 		EnableVoting:          res.EnableVoting,
 		BusinessEmailRequired: res.BusinessEmailRequired,
 		SsoGroupEnabled:       res.SsoGroupEnabled,
-		SsoGroupName:          res.SsoGroupName,
 		IsAuditEnabled:        res.IsAuditEnabled,
 		Public:                res.Public,
 		PublicName:            res.PublicName,
@@ -670,7 +655,6 @@ func NewCreateCommitteePayload(body *CreateCommitteeRequestBody, version *string
 		Category:          *body.Category,
 		Description:       body.Description,
 		Website:           body.Website,
-		SsoGroupName:      body.SsoGroupName,
 		PublicName:        body.PublicName,
 		ParentCommitteeID: body.ParentCommitteeID,
 	}
@@ -742,7 +726,6 @@ func NewUpdateCommitteePayload(body *UpdateCommitteeRequestBody, id string, vers
 		Category:          *body.Category,
 		Description:       body.Description,
 		Website:           body.Website,
-		SsoGroupName:      body.SsoGroupName,
 		PublicName:        body.PublicName,
 		ParentCommitteeID: body.ParentCommitteeID,
 	}
@@ -761,9 +744,6 @@ func NewUpdateCommitteePayload(body *UpdateCommitteeRequestBody, id string, vers
 	if body.Public != nil {
 		v.Public = *body.Public
 	}
-	if body.Status != nil {
-		v.Status = *body.Status
-	}
 	if body.EnableVoting == nil {
 		v.EnableVoting = false
 	}
@@ -778,9 +758,6 @@ func NewUpdateCommitteePayload(body *UpdateCommitteeRequestBody, id string, vers
 	}
 	if body.Public == nil {
 		v.Public = false
-	}
-	if body.Status == nil {
-		v.Status = "active"
 	}
 	if body.Writers != nil {
 		v.Writers = make([]string, len(body.Writers))
@@ -881,11 +858,6 @@ func ValidateUpdateCommitteeRequestBody(body *UpdateCommitteeRequestBody) (err e
 	}
 	if body.ParentCommitteeID != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
-	}
-	if body.Status != nil {
-		if !(*body.Status == "active" || *body.Status == "inactive" || *body.Status == "archived") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.status", *body.Status, []any{"active", "inactive", "archived"}))
-		}
 	}
 	return
 }

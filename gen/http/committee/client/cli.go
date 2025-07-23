@@ -25,7 +25,7 @@ func BuildCreateCommitteePayload(committeeCreateCommitteeBody string, committeeC
 	{
 		err = json.Unmarshal([]byte(committeeCreateCommitteeBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"business_email_required\": false,\n      \"category\": \"Technical Steering Committee\",\n      \"description\": \"Main technical oversight committee for the project\",\n      \"enable_voting\": true,\n      \"is_audit_enabled\": false,\n      \"name\": \"Technical Steering Committee\",\n      \"parent_committee_id\": \"90b147f2-7cdd-157a-a2f4-9d4a567123fc\",\n      \"public\": true,\n      \"public_name\": \"TSC Committee Calendar\",\n      \"sso_group_enabled\": true,\n      \"sso_group_name\": \"cncf-technical-steering\",\n      \"status\": \"active\",\n      \"website\": \"https://committee.example.org\",\n      \"writers\": [\n         \"manager_user_id1\",\n         \"manager_user_id2\"\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"business_email_required\": false,\n      \"category\": \"Technical Steering Committee\",\n      \"description\": \"Main technical oversight committee for the project\",\n      \"enable_voting\": true,\n      \"is_audit_enabled\": false,\n      \"name\": \"Technical Steering Committee\",\n      \"parent_committee_id\": \"90b147f2-7cdd-157a-a2f4-9d4a567123fc\",\n      \"public\": true,\n      \"public_name\": \"TSC Committee Calendar\",\n      \"sso_group_enabled\": true,\n      \"status\": \"active\",\n      \"website\": \"https://committee.example.org\",\n      \"writers\": [\n         \"manager_user_id1\",\n         \"manager_user_id2\"\n      ]\n   }'")
 		}
 		if utf8.RuneCountInString(body.Name) > 100 {
 			err = goa.MergeErrors(err, goa.InvalidLengthError("body.name", body.Name, utf8.RuneCountInString(body.Name), 100, false))
@@ -80,7 +80,6 @@ func BuildCreateCommitteePayload(committeeCreateCommitteeBody string, committeeC
 		EnableVoting:          body.EnableVoting,
 		BusinessEmailRequired: body.BusinessEmailRequired,
 		SsoGroupEnabled:       body.SsoGroupEnabled,
-		SsoGroupName:          body.SsoGroupName,
 		IsAuditEnabled:        body.IsAuditEnabled,
 		Public:                body.Public,
 		PublicName:            body.PublicName,
@@ -181,7 +180,7 @@ func BuildUpdateCommitteePayload(committeeUpdateCommitteeBody string, committeeU
 	{
 		err = json.Unmarshal([]byte(committeeUpdateCommitteeBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"business_email_required\": false,\n      \"category\": \"Technical Steering Committee\",\n      \"description\": \"Main technical oversight committee for the project\",\n      \"enable_voting\": true,\n      \"is_audit_enabled\": false,\n      \"name\": \"Technical Steering Committee\",\n      \"parent_committee_id\": \"90b147f2-7cdd-157a-a2f4-9d4a567123fc\",\n      \"project_id\": \"a0956000001FwZVAA0\",\n      \"public\": true,\n      \"public_name\": \"TSC Committee Calendar\",\n      \"sso_group_enabled\": true,\n      \"sso_group_name\": \"cncf-technical-steering\",\n      \"status\": \"active\",\n      \"website\": \"https://committee.example.org\",\n      \"writers\": [\n         \"manager_user_id1\",\n         \"manager_user_id2\"\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"business_email_required\": false,\n      \"category\": \"Technical Steering Committee\",\n      \"description\": \"Main technical oversight committee for the project\",\n      \"enable_voting\": true,\n      \"is_audit_enabled\": false,\n      \"name\": \"Technical Steering Committee\",\n      \"parent_committee_id\": \"90b147f2-7cdd-157a-a2f4-9d4a567123fc\",\n      \"project_id\": \"a0956000001FwZVAA0\",\n      \"public\": true,\n      \"public_name\": \"TSC Committee Calendar\",\n      \"sso_group_enabled\": true,\n      \"website\": \"https://committee.example.org\",\n      \"writers\": [\n         \"manager_user_id1\",\n         \"manager_user_id2\"\n      ]\n   }'")
 		}
 		if utf8.RuneCountInString(body.Name) > 100 {
 			err = goa.MergeErrors(err, goa.InvalidLengthError("body.name", body.Name, utf8.RuneCountInString(body.Name), 100, false))
@@ -202,9 +201,6 @@ func BuildUpdateCommitteePayload(committeeUpdateCommitteeBody string, committeeU
 		}
 		if body.ParentCommitteeID != nil {
 			err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
-		}
-		if !(body.Status == "active" || body.Status == "inactive" || body.Status == "archived") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.status", body.Status, []any{"active", "inactive", "archived"}))
 		}
 		if err != nil {
 			return nil, err
@@ -251,12 +247,10 @@ func BuildUpdateCommitteePayload(committeeUpdateCommitteeBody string, committeeU
 		EnableVoting:          body.EnableVoting,
 		BusinessEmailRequired: body.BusinessEmailRequired,
 		SsoGroupEnabled:       body.SsoGroupEnabled,
-		SsoGroupName:          body.SsoGroupName,
 		IsAuditEnabled:        body.IsAuditEnabled,
 		Public:                body.Public,
 		PublicName:            body.PublicName,
 		ParentCommitteeID:     body.ParentCommitteeID,
-		Status:                body.Status,
 	}
 	{
 		var zero bool
@@ -286,12 +280,6 @@ func BuildUpdateCommitteePayload(committeeUpdateCommitteeBody string, committeeU
 		var zero bool
 		if v.Public == zero {
 			v.Public = false
-		}
-	}
-	{
-		var zero string
-		if v.Status == zero {
-			v.Status = "active"
 		}
 	}
 	if body.Writers != nil {
