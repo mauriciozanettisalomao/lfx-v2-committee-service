@@ -25,7 +25,7 @@ func BuildCreateCommitteePayload(committeeCreateCommitteeBody string, committeeC
 	{
 		err = json.Unmarshal([]byte(committeeCreateCommitteeBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"business_email_required\": false,\n      \"category\": \"Technical Steering Committee\",\n      \"description\": \"Main technical oversight committee for the project\",\n      \"enable_voting\": true,\n      \"is_audit_enabled\": false,\n      \"name\": \"Technical Steering Committee\",\n      \"parent_committee_id\": \"90b147f2-7cdd-157a-a2f4-9d4a567123fc\",\n      \"public\": true,\n      \"public_name\": \"TSC Committee Calendar\",\n      \"sso_group_enabled\": true,\n      \"website\": \"https://committee.example.org\",\n      \"writers\": [\n         \"manager_user_id1\",\n         \"manager_user_id2\"\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"business_email_required\": false,\n      \"calendar\": {\n         \"public\": true\n      },\n      \"category\": \"Technical Steering Committee\",\n      \"description\": \"Main technical oversight committee for the project\",\n      \"enable_voting\": true,\n      \"is_audit_enabled\": false,\n      \"name\": \"Technical Steering Committee\",\n      \"parent_committee_id\": \"90b147f2-7cdd-157a-a2f4-9d4a567123fc\",\n      \"public\": true,\n      \"public_name\": \"TSC Committee Calendar\",\n      \"sso_group_enabled\": true,\n      \"website\": \"https://committee.example.org\",\n      \"writers\": [\n         \"manager_user_id1\",\n         \"manager_user_id2\"\n      ]\n   }'")
 		}
 		if utf8.RuneCountInString(body.Name) > 100 {
 			err = goa.MergeErrors(err, goa.InvalidLengthError("body.name", body.Name, utf8.RuneCountInString(body.Name), 100, false))
@@ -43,6 +43,11 @@ func BuildCreateCommitteePayload(committeeCreateCommitteeBody string, committeeC
 		}
 		if body.Website != nil {
 			err = goa.MergeErrors(err, goa.ValidatePattern("body.website", *body.Website, "^(https?://)?[^\\s/$.?#].[^\\s]*$"))
+		}
+		if body.PublicName != nil {
+			if utf8.RuneCountInString(*body.PublicName) > 100 {
+				err = goa.MergeErrors(err, goa.InvalidLengthError("body.public_name", *body.PublicName, utf8.RuneCountInString(*body.PublicName), 100, false))
+			}
 		}
 		if body.ParentCommitteeID != nil {
 			err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
@@ -112,6 +117,20 @@ func BuildCreateCommitteePayload(committeeCreateCommitteeBody string, committeeC
 			v.Public = false
 		}
 	}
+	if body.Calendar != nil {
+		v.Calendar = &struct {
+			// Whether the committee calendar is publicly visible
+			Public bool
+		}{
+			Public: body.Calendar.Public,
+		}
+		{
+			var zero bool
+			if v.Calendar.Public == zero {
+				v.Calendar.Public = false
+			}
+		}
+	}
 	if body.Writers != nil {
 		v.Writers = make([]string, len(body.Writers))
 		for i, val := range body.Writers {
@@ -170,7 +189,10 @@ func BuildUpdateCommitteePayload(committeeUpdateCommitteeBody string, committeeU
 	{
 		err = json.Unmarshal([]byte(committeeUpdateCommitteeBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"business_email_required\": false,\n      \"category\": \"Technical Steering Committee\",\n      \"description\": \"Main technical oversight committee for the project\",\n      \"enable_voting\": true,\n      \"is_audit_enabled\": false,\n      \"name\": \"Technical Steering Committee\",\n      \"parent_committee_id\": \"90b147f2-7cdd-157a-a2f4-9d4a567123fc\",\n      \"project_id\": \"a0956000001FwZVAA0\",\n      \"public\": true,\n      \"public_name\": \"TSC Committee Calendar\",\n      \"sso_group_enabled\": true,\n      \"website\": \"https://committee.example.org\",\n      \"writers\": [\n         \"manager_user_id1\",\n         \"manager_user_id2\"\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"business_email_required\": false,\n      \"calendar\": {\n         \"public\": true\n      },\n      \"category\": \"Technical Steering Committee\",\n      \"description\": \"Main technical oversight committee for the project\",\n      \"enable_voting\": true,\n      \"is_audit_enabled\": false,\n      \"name\": \"Technical Steering Committee\",\n      \"parent_committee_id\": \"90b147f2-7cdd-157a-a2f4-9d4a567123fc\",\n      \"project_id\": \"7cad5a8d-19d0-41a4-81a6-043453daf9ee\",\n      \"public\": true,\n      \"public_name\": \"TSC Committee Calendar\",\n      \"sso_group_enabled\": true,\n      \"website\": \"https://committee.example.org\",\n      \"writers\": [\n         \"manager_user_id1\",\n         \"manager_user_id2\"\n      ]\n   }'")
+		}
+		if body.ProjectID != nil {
+			err = goa.MergeErrors(err, goa.ValidateFormat("body.project_id", *body.ProjectID, goa.FormatUUID))
 		}
 		if utf8.RuneCountInString(body.Name) > 100 {
 			err = goa.MergeErrors(err, goa.InvalidLengthError("body.name", body.Name, utf8.RuneCountInString(body.Name), 100, false))
@@ -188,6 +210,11 @@ func BuildUpdateCommitteePayload(committeeUpdateCommitteeBody string, committeeU
 		}
 		if body.Website != nil {
 			err = goa.MergeErrors(err, goa.ValidatePattern("body.website", *body.Website, "^(https?://)?[^\\s/$.?#].[^\\s]*$"))
+		}
+		if body.PublicName != nil {
+			if utf8.RuneCountInString(*body.PublicName) > 100 {
+				err = goa.MergeErrors(err, goa.InvalidLengthError("body.public_name", *body.PublicName, utf8.RuneCountInString(*body.PublicName), 100, false))
+			}
 		}
 		if body.ParentCommitteeID != nil {
 			err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
@@ -270,6 +297,20 @@ func BuildUpdateCommitteePayload(committeeUpdateCommitteeBody string, committeeU
 		var zero bool
 		if v.Public == zero {
 			v.Public = false
+		}
+	}
+	if body.Calendar != nil {
+		v.Calendar = &struct {
+			// Whether the committee calendar is publicly visible
+			Public bool
+		}{
+			Public: body.Calendar.Public,
+		}
+		{
+			var zero bool
+			if v.Calendar.Public == zero {
+				v.Calendar.Public = false
+			}
 		}
 	}
 	if body.Writers != nil {

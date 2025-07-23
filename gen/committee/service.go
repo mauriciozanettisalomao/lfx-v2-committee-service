@@ -57,7 +57,8 @@ var MethodNames = [6]string{"create-committee", "get-committee", "update-committ
 type Committee struct {
 	// The unique identifier of the committee
 	ID *string
-	// The project identifier this committee belongs to
+	// The project identifier this committee belongs to -- v2 id, not related to v1
+	// id directly
 	ProjectID *string
 	// The name of the committee
 	Name *string
@@ -75,8 +76,13 @@ type Committee struct {
 	SsoGroupEnabled bool
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool
-	// Whether the committee is publicly visible
+	// General committee visibility/access permissions
 	Public bool
+	// Settings related to the committee calendar
+	Calendar *struct {
+		// Whether the committee calendar is publicly visible
+		Public bool
+	}
 	// The public display name of the committee
 	PublicName *string
 	// The ID of the parent committee, should be empty if there is none
@@ -108,8 +114,13 @@ type CreateCommitteePayload struct {
 	SsoGroupEnabled bool
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool
-	// Whether the committee is publicly visible
+	// General committee visibility/access permissions
 	Public bool
+	// Settings related to the committee calendar
+	Calendar *struct {
+		// Whether the committee calendar is publicly visible
+		Public bool
+	}
 	// The public display name of the committee
 	PublicName *string
 	// The ID of the parent committee, should be empty if there is none
@@ -161,7 +172,8 @@ type UpdateCommitteePayload struct {
 	Etag *string
 	// Committee ID
 	ID *string
-	// The project identifier this committee belongs to
+	// The project identifier this committee belongs to -- v2 id, not related to v1
+	// id directly
 	ProjectID *string
 	// The name of the committee
 	Name string
@@ -179,8 +191,13 @@ type UpdateCommitteePayload struct {
 	SsoGroupEnabled bool
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool
-	// Whether the committee is publicly visible
+	// General committee visibility/access permissions
 	Public bool
+	// Settings related to the committee calendar
+	Calendar *struct {
+		// Whether the committee calendar is publicly visible
+		Public bool
+	}
 	// The public display name of the committee
 	PublicName *string
 	// The ID of the parent committee, should be empty if there is none
