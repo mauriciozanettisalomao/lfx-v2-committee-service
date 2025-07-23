@@ -40,8 +40,6 @@ type CreateCommitteeRequestBody struct {
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
 	ParentCommitteeID *string `form:"parent_committee_id,omitempty" json:"parent_committee_id,omitempty" xml:"parent_committee_id,omitempty"`
-	// The current status of the committee
-	Status string `form:"status" json:"status" xml:"status"`
 	// Manager user IDs who can edit/modify this committee
 	Writers []string `form:"writers,omitempty" json:"writers,omitempty" xml:"writers,omitempty"`
 }
@@ -106,8 +104,6 @@ type CreateCommitteeResponseBody struct {
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
 	ParentCommitteeID *string `form:"parent_committee_id,omitempty" json:"parent_committee_id,omitempty" xml:"parent_committee_id,omitempty"`
-	// The current status of the committee
-	Status *string `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
 	// Manager user IDs who can edit/modify this committee
 	Writers []string `form:"writers,omitempty" json:"writers,omitempty" xml:"writers,omitempty"`
 }
@@ -145,8 +141,6 @@ type UpdateCommitteeResponseBody struct {
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
 	ParentCommitteeID *string `form:"parent_committee_id,omitempty" json:"parent_committee_id,omitempty" xml:"parent_committee_id,omitempty"`
-	// The current status of the committee
-	Status *string `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
 	// Manager user IDs who can edit/modify this committee
 	Writers []string `form:"writers,omitempty" json:"writers,omitempty" xml:"writers,omitempty"`
 }
@@ -299,8 +293,6 @@ type CommitteeResponseBody struct {
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
 	ParentCommitteeID *string `form:"parent_committee_id,omitempty" json:"parent_committee_id,omitempty" xml:"parent_committee_id,omitempty"`
-	// The current status of the committee
-	Status *string `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
 	// Manager user IDs who can edit/modify this committee
 	Writers []string `form:"writers,omitempty" json:"writers,omitempty" xml:"writers,omitempty"`
 }
@@ -320,7 +312,6 @@ func NewCreateCommitteeRequestBody(p *committee.CreateCommitteePayload) *CreateC
 		Public:                p.Public,
 		PublicName:            p.PublicName,
 		ParentCommitteeID:     p.ParentCommitteeID,
-		Status:                p.Status,
 	}
 	{
 		var zero bool
@@ -350,12 +341,6 @@ func NewCreateCommitteeRequestBody(p *committee.CreateCommitteePayload) *CreateC
 		var zero bool
 		if body.Public == zero {
 			body.Public = false
-		}
-	}
-	{
-		var zero string
-		if body.Status == zero {
-			body.Status = "active"
 		}
 	}
 	if p.Writers != nil {
@@ -451,9 +436,6 @@ func NewCreateCommitteeCommitteeCreated(body *CreateCommitteeResponseBody) *comm
 	if body.Public != nil {
 		v.Public = *body.Public
 	}
-	if body.Status != nil {
-		v.Status = *body.Status
-	}
 	if body.EnableVoting == nil {
 		v.EnableVoting = false
 	}
@@ -468,9 +450,6 @@ func NewCreateCommitteeCommitteeCreated(body *CreateCommitteeResponseBody) *comm
 	}
 	if body.Public == nil {
 		v.Public = false
-	}
-	if body.Status == nil {
-		v.Status = "active"
 	}
 	if body.Writers != nil {
 		v.Writers = make([]string, len(body.Writers))
@@ -550,9 +529,6 @@ func NewGetCommitteeResultOK(body *GetCommitteeResponseBody, etag *string) *comm
 	if body.Public != nil {
 		v.Public = *body.Public
 	}
-	if body.Status != nil {
-		v.Status = *body.Status
-	}
 	if body.EnableVoting == nil {
 		v.EnableVoting = false
 	}
@@ -567,9 +543,6 @@ func NewGetCommitteeResultOK(body *GetCommitteeResponseBody, etag *string) *comm
 	}
 	if body.Public == nil {
 		v.Public = false
-	}
-	if body.Status == nil {
-		v.Status = "active"
 	}
 	if body.Writers != nil {
 		v.Writers = make([]string, len(body.Writers))
@@ -643,9 +616,6 @@ func NewUpdateCommitteeCommitteeOK(body *UpdateCommitteeResponseBody) *committee
 	if body.Public != nil {
 		v.Public = *body.Public
 	}
-	if body.Status != nil {
-		v.Status = *body.Status
-	}
 	if body.EnableVoting == nil {
 		v.EnableVoting = false
 	}
@@ -660,9 +630,6 @@ func NewUpdateCommitteeCommitteeOK(body *UpdateCommitteeResponseBody) *committee
 	}
 	if body.Public == nil {
 		v.Public = false
-	}
-	if body.Status == nil {
-		v.Status = "active"
 	}
 	if body.Writers != nil {
 		v.Writers = make([]string, len(body.Writers))
@@ -776,8 +743,8 @@ func ValidateCreateCommitteeResponseBody(body *CreateCommitteeResponseBody) (err
 		}
 	}
 	if body.Category != nil {
-		if !(*body.Category == "Legal Committee" || *body.Category == "Finance Committee" || *body.Category == "Special Interest Group" || *body.Category == "Board" || *body.Category == "Technical Oversight Committee/Technical Advisory Committee" || *body.Category == "Technical Steering Committee" || *body.Category == "Marketing Oversight Committee/Marketing Advisory Committee" || *body.Category == "Marketing Committee/Sub Committee" || *body.Category == "Code of Conduct" || *body.Category == "Product Security" || *body.Category == "Technical Mailing List" || *body.Category == "Marketing Mailing List" || *body.Category == "Working Group" || *body.Category == "Committers" || *body.Category == "Maintainers" || *body.Category == "Ambassador" || *body.Category == "Government Advisory Council" || *body.Category == "Expert Group" || *body.Category == "Other") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []any{"Legal Committee", "Finance Committee", "Special Interest Group", "Board", "Technical Oversight Committee/Technical Advisory Committee", "Technical Steering Committee", "Marketing Oversight Committee/Marketing Advisory Committee", "Marketing Committee/Sub Committee", "Code of Conduct", "Product Security", "Technical Mailing List", "Marketing Mailing List", "Working Group", "Committers", "Maintainers", "Ambassador", "Government Advisory Council", "Expert Group", "Other"}))
+		if !(*body.Category == "Ambassador" || *body.Category == "Board" || *body.Category == "Code of Conduct" || *body.Category == "Committers" || *body.Category == "Expert Group" || *body.Category == "Finance Committee" || *body.Category == "Government Advisory Council" || *body.Category == "Legal Committee" || *body.Category == "Maintainers" || *body.Category == "Marketing Committee/Sub Committee" || *body.Category == "Marketing Mailing List" || *body.Category == "Marketing Oversight Committee/Marketing Advisory Committee" || *body.Category == "Other" || *body.Category == "Product Security" || *body.Category == "Special Interest Group" || *body.Category == "Technical Mailing List" || *body.Category == "Technical Oversight Committee/Technical Advisory Committee" || *body.Category == "Technical Steering Committee" || *body.Category == "Working Group") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []any{"Ambassador", "Board", "Code of Conduct", "Committers", "Expert Group", "Finance Committee", "Government Advisory Council", "Legal Committee", "Maintainers", "Marketing Committee/Sub Committee", "Marketing Mailing List", "Marketing Oversight Committee/Marketing Advisory Committee", "Other", "Product Security", "Special Interest Group", "Technical Mailing List", "Technical Oversight Committee/Technical Advisory Committee", "Technical Steering Committee", "Working Group"}))
 		}
 	}
 	if body.Description != nil {
@@ -793,11 +760,6 @@ func ValidateCreateCommitteeResponseBody(body *CreateCommitteeResponseBody) (err
 	}
 	if body.ParentCommitteeID != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
-	}
-	if body.Status != nil {
-		if !(*body.Status == "active" || *body.Status == "inactive" || *body.Status == "archived") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.status", *body.Status, []any{"active", "inactive", "archived"}))
-		}
 	}
 	return
 }
@@ -814,8 +776,8 @@ func ValidateGetCommitteeResponseBody(body *GetCommitteeResponseBody) (err error
 		}
 	}
 	if body.Category != nil {
-		if !(*body.Category == "Legal Committee" || *body.Category == "Finance Committee" || *body.Category == "Special Interest Group" || *body.Category == "Board" || *body.Category == "Technical Oversight Committee/Technical Advisory Committee" || *body.Category == "Technical Steering Committee" || *body.Category == "Marketing Oversight Committee/Marketing Advisory Committee" || *body.Category == "Marketing Committee/Sub Committee" || *body.Category == "Code of Conduct" || *body.Category == "Product Security" || *body.Category == "Technical Mailing List" || *body.Category == "Marketing Mailing List" || *body.Category == "Working Group" || *body.Category == "Committers" || *body.Category == "Maintainers" || *body.Category == "Ambassador" || *body.Category == "Government Advisory Council" || *body.Category == "Expert Group" || *body.Category == "Other") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []any{"Legal Committee", "Finance Committee", "Special Interest Group", "Board", "Technical Oversight Committee/Technical Advisory Committee", "Technical Steering Committee", "Marketing Oversight Committee/Marketing Advisory Committee", "Marketing Committee/Sub Committee", "Code of Conduct", "Product Security", "Technical Mailing List", "Marketing Mailing List", "Working Group", "Committers", "Maintainers", "Ambassador", "Government Advisory Council", "Expert Group", "Other"}))
+		if !(*body.Category == "Ambassador" || *body.Category == "Board" || *body.Category == "Code of Conduct" || *body.Category == "Committers" || *body.Category == "Expert Group" || *body.Category == "Finance Committee" || *body.Category == "Government Advisory Council" || *body.Category == "Legal Committee" || *body.Category == "Maintainers" || *body.Category == "Marketing Committee/Sub Committee" || *body.Category == "Marketing Mailing List" || *body.Category == "Marketing Oversight Committee/Marketing Advisory Committee" || *body.Category == "Other" || *body.Category == "Product Security" || *body.Category == "Special Interest Group" || *body.Category == "Technical Mailing List" || *body.Category == "Technical Oversight Committee/Technical Advisory Committee" || *body.Category == "Technical Steering Committee" || *body.Category == "Working Group") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []any{"Ambassador", "Board", "Code of Conduct", "Committers", "Expert Group", "Finance Committee", "Government Advisory Council", "Legal Committee", "Maintainers", "Marketing Committee/Sub Committee", "Marketing Mailing List", "Marketing Oversight Committee/Marketing Advisory Committee", "Other", "Product Security", "Special Interest Group", "Technical Mailing List", "Technical Oversight Committee/Technical Advisory Committee", "Technical Steering Committee", "Working Group"}))
 		}
 	}
 	if body.Description != nil {
@@ -831,11 +793,6 @@ func ValidateGetCommitteeResponseBody(body *GetCommitteeResponseBody) (err error
 	}
 	if body.ParentCommitteeID != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
-	}
-	if body.Status != nil {
-		if !(*body.Status == "active" || *body.Status == "inactive" || *body.Status == "archived") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.status", *body.Status, []any{"active", "inactive", "archived"}))
-		}
 	}
 	return
 }
@@ -852,8 +809,8 @@ func ValidateUpdateCommitteeResponseBody(body *UpdateCommitteeResponseBody) (err
 		}
 	}
 	if body.Category != nil {
-		if !(*body.Category == "Legal Committee" || *body.Category == "Finance Committee" || *body.Category == "Special Interest Group" || *body.Category == "Board" || *body.Category == "Technical Oversight Committee/Technical Advisory Committee" || *body.Category == "Technical Steering Committee" || *body.Category == "Marketing Oversight Committee/Marketing Advisory Committee" || *body.Category == "Marketing Committee/Sub Committee" || *body.Category == "Code of Conduct" || *body.Category == "Product Security" || *body.Category == "Technical Mailing List" || *body.Category == "Marketing Mailing List" || *body.Category == "Working Group" || *body.Category == "Committers" || *body.Category == "Maintainers" || *body.Category == "Ambassador" || *body.Category == "Government Advisory Council" || *body.Category == "Expert Group" || *body.Category == "Other") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []any{"Legal Committee", "Finance Committee", "Special Interest Group", "Board", "Technical Oversight Committee/Technical Advisory Committee", "Technical Steering Committee", "Marketing Oversight Committee/Marketing Advisory Committee", "Marketing Committee/Sub Committee", "Code of Conduct", "Product Security", "Technical Mailing List", "Marketing Mailing List", "Working Group", "Committers", "Maintainers", "Ambassador", "Government Advisory Council", "Expert Group", "Other"}))
+		if !(*body.Category == "Ambassador" || *body.Category == "Board" || *body.Category == "Code of Conduct" || *body.Category == "Committers" || *body.Category == "Expert Group" || *body.Category == "Finance Committee" || *body.Category == "Government Advisory Council" || *body.Category == "Legal Committee" || *body.Category == "Maintainers" || *body.Category == "Marketing Committee/Sub Committee" || *body.Category == "Marketing Mailing List" || *body.Category == "Marketing Oversight Committee/Marketing Advisory Committee" || *body.Category == "Other" || *body.Category == "Product Security" || *body.Category == "Special Interest Group" || *body.Category == "Technical Mailing List" || *body.Category == "Technical Oversight Committee/Technical Advisory Committee" || *body.Category == "Technical Steering Committee" || *body.Category == "Working Group") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []any{"Ambassador", "Board", "Code of Conduct", "Committers", "Expert Group", "Finance Committee", "Government Advisory Council", "Legal Committee", "Maintainers", "Marketing Committee/Sub Committee", "Marketing Mailing List", "Marketing Oversight Committee/Marketing Advisory Committee", "Other", "Product Security", "Special Interest Group", "Technical Mailing List", "Technical Oversight Committee/Technical Advisory Committee", "Technical Steering Committee", "Working Group"}))
 		}
 	}
 	if body.Description != nil {
@@ -869,11 +826,6 @@ func ValidateUpdateCommitteeResponseBody(body *UpdateCommitteeResponseBody) (err
 	}
 	if body.ParentCommitteeID != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
-	}
-	if body.Status != nil {
-		if !(*body.Status == "active" || *body.Status == "inactive" || *body.Status == "archived") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.status", *body.Status, []any{"active", "inactive", "archived"}))
-		}
 	}
 	return
 }
@@ -1034,8 +986,8 @@ func ValidateCommitteeResponseBody(body *CommitteeResponseBody) (err error) {
 		}
 	}
 	if body.Category != nil {
-		if !(*body.Category == "Legal Committee" || *body.Category == "Finance Committee" || *body.Category == "Special Interest Group" || *body.Category == "Board" || *body.Category == "Technical Oversight Committee/Technical Advisory Committee" || *body.Category == "Technical Steering Committee" || *body.Category == "Marketing Oversight Committee/Marketing Advisory Committee" || *body.Category == "Marketing Committee/Sub Committee" || *body.Category == "Code of Conduct" || *body.Category == "Product Security" || *body.Category == "Technical Mailing List" || *body.Category == "Marketing Mailing List" || *body.Category == "Working Group" || *body.Category == "Committers" || *body.Category == "Maintainers" || *body.Category == "Ambassador" || *body.Category == "Government Advisory Council" || *body.Category == "Expert Group" || *body.Category == "Other") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []any{"Legal Committee", "Finance Committee", "Special Interest Group", "Board", "Technical Oversight Committee/Technical Advisory Committee", "Technical Steering Committee", "Marketing Oversight Committee/Marketing Advisory Committee", "Marketing Committee/Sub Committee", "Code of Conduct", "Product Security", "Technical Mailing List", "Marketing Mailing List", "Working Group", "Committers", "Maintainers", "Ambassador", "Government Advisory Council", "Expert Group", "Other"}))
+		if !(*body.Category == "Ambassador" || *body.Category == "Board" || *body.Category == "Code of Conduct" || *body.Category == "Committers" || *body.Category == "Expert Group" || *body.Category == "Finance Committee" || *body.Category == "Government Advisory Council" || *body.Category == "Legal Committee" || *body.Category == "Maintainers" || *body.Category == "Marketing Committee/Sub Committee" || *body.Category == "Marketing Mailing List" || *body.Category == "Marketing Oversight Committee/Marketing Advisory Committee" || *body.Category == "Other" || *body.Category == "Product Security" || *body.Category == "Special Interest Group" || *body.Category == "Technical Mailing List" || *body.Category == "Technical Oversight Committee/Technical Advisory Committee" || *body.Category == "Technical Steering Committee" || *body.Category == "Working Group") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.category", *body.Category, []any{"Ambassador", "Board", "Code of Conduct", "Committers", "Expert Group", "Finance Committee", "Government Advisory Council", "Legal Committee", "Maintainers", "Marketing Committee/Sub Committee", "Marketing Mailing List", "Marketing Oversight Committee/Marketing Advisory Committee", "Other", "Product Security", "Special Interest Group", "Technical Mailing List", "Technical Oversight Committee/Technical Advisory Committee", "Technical Steering Committee", "Working Group"}))
 		}
 	}
 	if body.Description != nil {
@@ -1051,11 +1003,6 @@ func ValidateCommitteeResponseBody(body *CommitteeResponseBody) (err error) {
 	}
 	if body.ParentCommitteeID != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
-	}
-	if body.Status != nil {
-		if !(*body.Status == "active" || *body.Status == "inactive" || *body.Status == "archived") {
-			err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.status", *body.Status, []any{"active", "inactive", "archived"}))
-		}
 	}
 	return
 }
