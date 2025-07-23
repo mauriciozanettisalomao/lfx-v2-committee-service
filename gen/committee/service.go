@@ -81,8 +81,6 @@ type Committee struct {
 	PublicName *string
 	// The ID of the parent committee, should be empty if there is none
 	ParentCommitteeID *string
-	// The current status of the committee
-	Status string
 	// Manager user IDs who can edit/modify this committee
 	Writers []string
 }
@@ -116,8 +114,6 @@ type CreateCommitteePayload struct {
 	PublicName *string
 	// The ID of the parent committee, should be empty if there is none
 	ParentCommitteeID *string
-	// The current status of the committee
-	Status string
 	// Manager user IDs who can edit/modify this committee
 	Writers []string
 }
