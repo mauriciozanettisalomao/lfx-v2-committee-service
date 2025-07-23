@@ -40,7 +40,6 @@ func UsageExamples() string {
       "public": true,
       "public_name": "TSC Committee Calendar",
       "sso_group_enabled": true,
-      "sso_group_name": "cncf-technical-steering",
       "status": "active",
       "website": "https://committee.example.org",
       "writers": [
@@ -240,7 +239,6 @@ Example:
       "public": true,
       "public_name": "TSC Committee Calendar",
       "sso_group_enabled": true,
-      "sso_group_name": "cncf-technical-steering",
       "status": "active",
       "website": "https://committee.example.org",
       "writers": [
@@ -287,8 +285,6 @@ Example:
       "public": true,
       "public_name": "TSC Committee Calendar",
       "sso_group_enabled": true,
-      "sso_group_name": "cncf-technical-steering",
-      "status": "active",
       "website": "https://committee.example.org",
       "writers": [
          "manager_user_id1",

@@ -410,10 +410,6 @@ definitions:
                 description: Whether SSO group integration is enabled
                 default: false
                 example: true
-            sso_group_name:
-                type: string
-                description: The name of the SSO group
-                example: cncf-technical-steering
             status:
                 type: string
                 description: The current status of the committee
@@ -451,7 +447,6 @@ definitions:
             public: true
             public_name: TSC Committee Calendar
             sso_group_enabled: true
-            sso_group_name: cncf-technical-steering
             status: active
             website: https://committee.example.org
             writers:
@@ -529,10 +524,6 @@ definitions:
                 description: Whether SSO group integration is enabled
                 default: false
                 example: true
-            sso_group_name:
-                type: string
-                description: The name of the SSO group
-                example: cncf-technical-steering
             status:
                 type: string
                 description: The current status of the committee
@@ -568,7 +559,6 @@ definitions:
             public: true
             public_name: TSC Committee Calendar
             sso_group_enabled: true
-            sso_group_name: cncf-technical-steering
             status: active
             website: https://committee.example.org
             writers:
@@ -656,19 +646,6 @@ definitions:
                 description: Whether SSO group integration is enabled
                 default: false
                 example: true
-            sso_group_name:
-                type: string
-                description: The name of the SSO group
-                example: cncf-technical-steering
-            status:
-                type: string
-                description: The current status of the committee
-                default: active
-                example: active
-                enum:
-                    - active
-                    - inactive
-                    - archived
             website:
                 type: string
                 description: The website URL of the committee
@@ -696,8 +673,6 @@ definitions:
             public: true
             public_name: TSC Committee Calendar
             sso_group_enabled: true
-            sso_group_name: cncf-technical-steering
-            status: active
             website: https://committee.example.org
             writers:
                 - manager_user_id1
