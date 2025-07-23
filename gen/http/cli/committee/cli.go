@@ -31,6 +31,9 @@ func UsageCommands() string {
 func UsageExamples() string {
 	return os.Args[0] + ` committee create-committee --body '{
       "business_email_required": false,
+      "calendar": {
+         "public": true
+      },
       "category": "Technical Steering Committee",
       "description": "Main technical oversight committee for the project",
       "enable_voting": true,
@@ -229,6 +232,9 @@ Create Committee
 Example:
     %[1]s committee create-committee --body '{
       "business_email_required": false,
+      "calendar": {
+         "public": true
+      },
       "category": "Technical Steering Committee",
       "description": "Main technical oversight committee for the project",
       "enable_voting": true,
@@ -273,13 +279,16 @@ Update Committee
 Example:
     %[1]s committee update-committee --body '{
       "business_email_required": false,
+      "calendar": {
+         "public": true
+      },
       "category": "Technical Steering Committee",
       "description": "Main technical oversight committee for the project",
       "enable_voting": true,
       "is_audit_enabled": false,
       "name": "Technical Steering Committee",
       "parent_committee_id": "90b147f2-7cdd-157a-a2f4-9d4a567123fc",
-      "project_id": "a0956000001FwZVAA0",
+      "project_id": "7cad5a8d-19d0-41a4-81a6-043453daf9ee",
       "public": true,
       "public_name": "TSC Committee Calendar",
       "sso_group_enabled": true,

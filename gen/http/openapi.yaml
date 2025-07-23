@@ -338,6 +338,17 @@ definitions:
                 description: Whether business email is required for committee members
                 default: false
                 example: false
+            calendar:
+                type: object
+                properties:
+                    public:
+                        type: boolean
+                        description: Whether the committee calendar is publicly visible
+                        default: false
+                        example: true
+                description: Settings related to the committee calendar
+                example:
+                    public: true
             category:
                 type: string
                 description: The category of the committee
@@ -394,17 +405,19 @@ definitions:
                 format: uuid
             project_id:
                 type: string
-                description: The project identifier this committee belongs to
-                example: a0956000001FwZVAA0
+                description: The project identifier this committee belongs to -- v2 id, not related to v1 id directly
+                example: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+                format: uuid
             public:
                 type: boolean
-                description: Whether the committee is publicly visible
+                description: General committee visibility/access permissions
                 default: false
                 example: true
             public_name:
                 type: string
                 description: The public display name of the committee
                 example: TSC Committee Calendar
+                maxLength: 100
             sso_group_enabled:
                 type: boolean
                 description: Whether SSO group integration is enabled
@@ -427,6 +440,8 @@ definitions:
                     - manager_user_id2
         example:
             business_email_required: false
+            calendar:
+                public: true
             category: Technical Steering Committee
             description: Main technical oversight committee for the project
             enable_voting: true
@@ -434,7 +449,7 @@ definitions:
             is_audit_enabled: false
             name: Technical Steering Committee
             parent_committee_id: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
-            project_id: a0956000001FwZVAA0
+            project_id: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
             public: true
             public_name: TSC Committee Calendar
             sso_group_enabled: true
@@ -451,6 +466,17 @@ definitions:
                 description: Whether business email is required for committee members
                 default: false
                 example: false
+            calendar:
+                type: object
+                properties:
+                    public:
+                        type: boolean
+                        description: Whether the committee calendar is publicly visible
+                        default: false
+                        example: true
+                description: Settings related to the committee calendar
+                example:
+                    public: true
             category:
                 type: string
                 description: The category of the committee
@@ -502,13 +528,14 @@ definitions:
                 format: uuid
             public:
                 type: boolean
-                description: Whether the committee is publicly visible
+                description: General committee visibility/access permissions
                 default: false
                 example: true
             public_name:
                 type: string
                 description: The public display name of the committee
                 example: TSC Committee Calendar
+                maxLength: 100
             sso_group_enabled:
                 type: boolean
                 description: Whether SSO group integration is enabled
@@ -531,6 +558,8 @@ definitions:
                     - manager_user_id2
         example:
             business_email_required: false
+            calendar:
+                public: true
             category: Technical Steering Committee
             description: Main technical oversight committee for the project
             enable_voting: true
@@ -559,6 +588,17 @@ definitions:
                 description: Whether business email is required for committee members
                 default: false
                 example: false
+            calendar:
+                type: object
+                properties:
+                    public:
+                        type: boolean
+                        description: Whether the committee calendar is publicly visible
+                        default: false
+                        example: true
+                description: Settings related to the committee calendar
+                example:
+                    public: true
             category:
                 type: string
                 description: The category of the committee
@@ -610,17 +650,19 @@ definitions:
                 format: uuid
             project_id:
                 type: string
-                description: The project identifier this committee belongs to
-                example: a0956000001FwZVAA0
+                description: The project identifier this committee belongs to -- v2 id, not related to v1 id directly
+                example: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+                format: uuid
             public:
                 type: boolean
-                description: Whether the committee is publicly visible
+                description: General committee visibility/access permissions
                 default: false
                 example: true
             public_name:
                 type: string
                 description: The public display name of the committee
                 example: TSC Committee Calendar
+                maxLength: 100
             sso_group_enabled:
                 type: boolean
                 description: Whether SSO group integration is enabled
@@ -643,13 +685,15 @@ definitions:
                     - manager_user_id2
         example:
             business_email_required: false
+            calendar:
+                public: true
             category: Technical Steering Committee
             description: Main technical oversight committee for the project
             enable_voting: true
             is_audit_enabled: false
             name: Technical Steering Committee
             parent_committee_id: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
-            project_id: a0956000001FwZVAA0
+            project_id: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
             public: true
             public_name: TSC Committee Calendar
             sso_group_enabled: true

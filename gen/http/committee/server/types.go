@@ -34,8 +34,13 @@ type CreateCommitteeRequestBody struct {
 	SsoGroupEnabled *bool `form:"sso_group_enabled,omitempty" json:"sso_group_enabled,omitempty" xml:"sso_group_enabled,omitempty"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled *bool `form:"is_audit_enabled,omitempty" json:"is_audit_enabled,omitempty" xml:"is_audit_enabled,omitempty"`
-	// Whether the committee is publicly visible
+	// General committee visibility/access permissions
 	Public *bool `form:"public,omitempty" json:"public,omitempty" xml:"public,omitempty"`
+	// Settings related to the committee calendar
+	Calendar *struct {
+		// Whether the committee calendar is publicly visible
+		Public *bool `form:"public" json:"public" xml:"public"`
+	} `form:"calendar,omitempty" json:"calendar,omitempty" xml:"calendar,omitempty"`
 	// The public display name of the committee
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
@@ -47,7 +52,8 @@ type CreateCommitteeRequestBody struct {
 // UpdateCommitteeRequestBody is the type of the "committee" service
 // "update-committee" endpoint HTTP request body.
 type UpdateCommitteeRequestBody struct {
-	// The project identifier this committee belongs to
+	// The project identifier this committee belongs to -- v2 id, not related to v1
+	// id directly
 	ProjectID *string `form:"project_id,omitempty" json:"project_id,omitempty" xml:"project_id,omitempty"`
 	// The name of the committee
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
@@ -65,8 +71,13 @@ type UpdateCommitteeRequestBody struct {
 	SsoGroupEnabled *bool `form:"sso_group_enabled,omitempty" json:"sso_group_enabled,omitempty" xml:"sso_group_enabled,omitempty"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled *bool `form:"is_audit_enabled,omitempty" json:"is_audit_enabled,omitempty" xml:"is_audit_enabled,omitempty"`
-	// Whether the committee is publicly visible
+	// General committee visibility/access permissions
 	Public *bool `form:"public,omitempty" json:"public,omitempty" xml:"public,omitempty"`
+	// Settings related to the committee calendar
+	Calendar *struct {
+		// Whether the committee calendar is publicly visible
+		Public *bool `form:"public" json:"public" xml:"public"`
+	} `form:"calendar,omitempty" json:"calendar,omitempty" xml:"calendar,omitempty"`
 	// The public display name of the committee
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
@@ -80,7 +91,8 @@ type UpdateCommitteeRequestBody struct {
 type CreateCommitteeResponseBody struct {
 	// The unique identifier of the committee
 	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	// The project identifier this committee belongs to
+	// The project identifier this committee belongs to -- v2 id, not related to v1
+	// id directly
 	ProjectID *string `form:"project_id,omitempty" json:"project_id,omitempty" xml:"project_id,omitempty"`
 	// The name of the committee
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
@@ -98,8 +110,13 @@ type CreateCommitteeResponseBody struct {
 	SsoGroupEnabled bool `form:"sso_group_enabled" json:"sso_group_enabled" xml:"sso_group_enabled"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool `form:"is_audit_enabled" json:"is_audit_enabled" xml:"is_audit_enabled"`
-	// Whether the committee is publicly visible
+	// General committee visibility/access permissions
 	Public bool `form:"public" json:"public" xml:"public"`
+	// Settings related to the committee calendar
+	Calendar *struct {
+		// Whether the committee calendar is publicly visible
+		Public bool `form:"public" json:"public" xml:"public"`
+	} `form:"calendar,omitempty" json:"calendar,omitempty" xml:"calendar,omitempty"`
 	// The public display name of the committee
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
@@ -117,7 +134,8 @@ type GetCommitteeResponseBody CommitteeResponseBody
 type UpdateCommitteeResponseBody struct {
 	// The unique identifier of the committee
 	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	// The project identifier this committee belongs to
+	// The project identifier this committee belongs to -- v2 id, not related to v1
+	// id directly
 	ProjectID *string `form:"project_id,omitempty" json:"project_id,omitempty" xml:"project_id,omitempty"`
 	// The name of the committee
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
@@ -135,8 +153,13 @@ type UpdateCommitteeResponseBody struct {
 	SsoGroupEnabled bool `form:"sso_group_enabled" json:"sso_group_enabled" xml:"sso_group_enabled"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool `form:"is_audit_enabled" json:"is_audit_enabled" xml:"is_audit_enabled"`
-	// Whether the committee is publicly visible
+	// General committee visibility/access permissions
 	Public bool `form:"public" json:"public" xml:"public"`
+	// Settings related to the committee calendar
+	Calendar *struct {
+		// Whether the committee calendar is publicly visible
+		Public bool `form:"public" json:"public" xml:"public"`
+	} `form:"calendar,omitempty" json:"calendar,omitempty" xml:"calendar,omitempty"`
 	// The public display name of the committee
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
@@ -269,7 +292,8 @@ type ReadyzServiceUnavailableResponseBody struct {
 type CommitteeResponseBody struct {
 	// The unique identifier of the committee
 	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	// The project identifier this committee belongs to
+	// The project identifier this committee belongs to -- v2 id, not related to v1
+	// id directly
 	ProjectID *string `form:"project_id,omitempty" json:"project_id,omitempty" xml:"project_id,omitempty"`
 	// The name of the committee
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
@@ -287,8 +311,13 @@ type CommitteeResponseBody struct {
 	SsoGroupEnabled bool `form:"sso_group_enabled" json:"sso_group_enabled" xml:"sso_group_enabled"`
 	// Whether audit logging is enabled for this committee
 	IsAuditEnabled bool `form:"is_audit_enabled" json:"is_audit_enabled" xml:"is_audit_enabled"`
-	// Whether the committee is publicly visible
+	// General committee visibility/access permissions
 	Public bool `form:"public" json:"public" xml:"public"`
+	// Settings related to the committee calendar
+	Calendar *struct {
+		// Whether the committee calendar is publicly visible
+		Public bool `form:"public" json:"public" xml:"public"`
+	} `form:"calendar,omitempty" json:"calendar,omitempty" xml:"calendar,omitempty"`
 	// The public display name of the committee
 	PublicName *string `form:"public_name,omitempty" json:"public_name,omitempty" xml:"public_name,omitempty"`
 	// The ID of the parent committee, should be empty if there is none
@@ -343,6 +372,20 @@ func NewCreateCommitteeResponseBody(res *committee.Committee) *CreateCommitteeRe
 		var zero bool
 		if body.Public == zero {
 			body.Public = false
+		}
+	}
+	if res.Calendar != nil {
+		body.Calendar = &struct {
+			// Whether the committee calendar is publicly visible
+			Public bool `form:"public" json:"public" xml:"public"`
+		}{
+			Public: res.Calendar.Public,
+		}
+		{
+			var zero bool
+			if body.Calendar.Public == zero {
+				body.Calendar.Public = false
+			}
 		}
 	}
 	if res.Writers != nil {
@@ -402,6 +445,20 @@ func NewGetCommitteeResponseBody(res *committee.GetCommitteeResult) *GetCommitte
 			body.Public = false
 		}
 	}
+	if res.Committee.Calendar != nil {
+		body.Calendar = &struct {
+			// Whether the committee calendar is publicly visible
+			Public bool `form:"public" json:"public" xml:"public"`
+		}{
+			Public: res.Committee.Calendar.Public,
+		}
+		{
+			var zero bool
+			if body.Calendar.Public == zero {
+				body.Calendar.Public = false
+			}
+		}
+	}
 	if res.Committee.Writers != nil {
 		body.Writers = make([]string, len(res.Committee.Writers))
 		for i, val := range res.Committee.Writers {
@@ -457,6 +514,20 @@ func NewUpdateCommitteeResponseBody(res *committee.Committee) *UpdateCommitteeRe
 		var zero bool
 		if body.Public == zero {
 			body.Public = false
+		}
+	}
+	if res.Calendar != nil {
+		body.Calendar = &struct {
+			// Whether the committee calendar is publicly visible
+			Public bool `form:"public" json:"public" xml:"public"`
+		}{
+			Public: res.Calendar.Public,
+		}
+		{
+			var zero bool
+			if body.Calendar.Public == zero {
+				body.Calendar.Public = false
+			}
 		}
 	}
 	if res.Writers != nil {
@@ -659,6 +730,18 @@ func NewCreateCommitteePayload(body *CreateCommitteeRequestBody, version *string
 	if body.Public == nil {
 		v.Public = false
 	}
+	if body.Calendar != nil {
+		v.Calendar = &struct {
+			// Whether the committee calendar is publicly visible
+			Public bool
+		}{}
+		if body.Calendar.Public != nil {
+			v.Calendar.Public = *body.Calendar.Public
+		}
+		if body.Calendar.Public == nil {
+			v.Calendar.Public = false
+		}
+	}
 	if body.Writers != nil {
 		v.Writers = make([]string, len(body.Writers))
 		for i, val := range body.Writers {
@@ -724,6 +807,18 @@ func NewUpdateCommitteePayload(body *UpdateCommitteeRequestBody, id string, vers
 	if body.Public == nil {
 		v.Public = false
 	}
+	if body.Calendar != nil {
+		v.Calendar = &struct {
+			// Whether the committee calendar is publicly visible
+			Public bool
+		}{}
+		if body.Calendar.Public != nil {
+			v.Calendar.Public = *body.Calendar.Public
+		}
+		if body.Calendar.Public == nil {
+			v.Calendar.Public = false
+		}
+	}
 	if body.Writers != nil {
 		v.Writers = make([]string, len(body.Writers))
 		for i, val := range body.Writers {
@@ -780,6 +875,11 @@ func ValidateCreateCommitteeRequestBody(body *CreateCommitteeRequestBody) (err e
 	if body.Website != nil {
 		err = goa.MergeErrors(err, goa.ValidatePattern("body.website", *body.Website, "^(https?://)?[^\\s/$.?#].[^\\s]*$"))
 	}
+	if body.PublicName != nil {
+		if utf8.RuneCountInString(*body.PublicName) > 100 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.public_name", *body.PublicName, utf8.RuneCountInString(*body.PublicName), 100, false))
+		}
+	}
 	if body.ParentCommitteeID != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
 	}
@@ -794,6 +894,9 @@ func ValidateUpdateCommitteeRequestBody(body *UpdateCommitteeRequestBody) (err e
 	}
 	if body.Category == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("category", "body"))
+	}
+	if body.ProjectID != nil {
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.project_id", *body.ProjectID, goa.FormatUUID))
 	}
 	if body.Name != nil {
 		if utf8.RuneCountInString(*body.Name) > 100 {
@@ -815,6 +918,11 @@ func ValidateUpdateCommitteeRequestBody(body *UpdateCommitteeRequestBody) (err e
 	}
 	if body.Website != nil {
 		err = goa.MergeErrors(err, goa.ValidatePattern("body.website", *body.Website, "^(https?://)?[^\\s/$.?#].[^\\s]*$"))
+	}
+	if body.PublicName != nil {
+		if utf8.RuneCountInString(*body.PublicName) > 100 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.public_name", *body.PublicName, utf8.RuneCountInString(*body.PublicName), 100, false))
+		}
 	}
 	if body.ParentCommitteeID != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.parent_committee_id", *body.ParentCommitteeID, goa.FormatUUID))
