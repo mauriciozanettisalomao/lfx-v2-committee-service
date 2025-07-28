@@ -4,7 +4,7 @@
 //
 // Command:
 // $ goa gen
-// github.com/linuxfoundation/lfx-v2-committee-service/cmd/lfx-v2-committee-service/design
+// github.com/linuxfoundation/lfx-v2-committee-service/cmd/committee-api/design
 
 package cli
 
