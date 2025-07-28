@@ -109,7 +109,7 @@ var _ = dsl.Service("committee-service", func() {
 
 			CommitteeUIDAttribute()
 			CommitteeBaseAttributes()
-			
+
 			dsl.Required("name", "category")
 		})
 
@@ -215,7 +215,6 @@ var _ = dsl.Service("committee-service", func() {
 
 			CommitteeUIDAttribute()
 			CommitteeSettingsAttributes()
-
 
 			WritersAttribute()
 			AuditorsAttribute()
