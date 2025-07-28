@@ -15,10 +15,10 @@ paths:
     /committees:
         post:
             tags:
-                - committee
-            summary: create-committee committee
+                - committee-service
+            summary: create-committee committee-service
             description: Create Committee
-            operationId: committee#create-committee
+            operationId: committee-service#create-committee
             parameters:
                 - name: v
                   in: query
@@ -36,7 +36,7 @@ paths:
                   in: body
                   required: true
                   schema:
-                    $ref: '#/definitions/CommitteeCreateCommitteeRequestBody'
+                    $ref: '#/definitions/CommitteeServiceCreateCommitteeRequestBody'
                     required:
                         - name
                         - category
@@ -44,7 +44,7 @@ paths:
                 "201":
                     description: Created response.
                     schema:
-                        $ref: '#/definitions/Committee'
+                        $ref: '#/definitions/CommitteeFull'
                 "400":
                     description: Bad Request response.
                     schema:
@@ -73,13 +73,13 @@ paths:
                 - http
             security:
                 - jwt_header_Authorization: []
-    /committees/{id}:
+    /committees/{uid}:
         get:
             tags:
-                - committee
-            summary: get-committee committee
+                - committee-service
+            summary: get-committee-base committee-service
             description: Get Committee
-            operationId: committee#get-committee
+            operationId: committee-service#get-committee-base
             parameters:
                 - name: v
                   in: query
@@ -88,9 +88,9 @@ paths:
                   type: string
                   enum:
                     - "1"
-                - name: id
+                - name: uid
                   in: path
-                  description: Committee ID
+                  description: Committee UID -- v2 uid, not related to v1 id directly
                   required: true
                   type: string
                   format: uuid
@@ -103,7 +103,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/CommitteeGetCommitteeResponseBody'
+                        $ref: '#/definitions/CommitteeServiceGetCommitteeBaseResponseBody'
                     headers:
                         ETag:
                             description: ETag header value
@@ -132,10 +132,10 @@ paths:
                 - jwt_header_Authorization: []
         put:
             tags:
-                - committee
-            summary: update-committee committee
+                - committee-service
+            summary: update-committee-base committee-service
             description: Update Committee
-            operationId: committee#update-committee
+            operationId: committee-service#update-committee-base
             parameters:
                 - name: v
                   in: query
@@ -144,9 +144,9 @@ paths:
                   type: string
                   enum:
                     - "1"
-                - name: id
+                - name: uid
                   in: path
-                  description: Committee ID
+                  description: Committee UID -- v2 uid, not related to v1 id directly
                   required: true
                   type: string
                   format: uuid
@@ -160,11 +160,11 @@ paths:
                   description: ETag header value
                   required: false
                   type: string
-                - name: Update-CommitteeRequestBody
+                - name: Update-Committee-BaseRequestBody
                   in: body
                   required: true
                   schema:
-                    $ref: '#/definitions/CommitteeUpdateCommitteeRequestBody'
+                    $ref: '#/definitions/CommitteeServiceUpdateCommitteeBaseRequestBody'
                     required:
                         - name
                         - category
@@ -172,7 +172,7 @@ paths:
                 "200":
                     description: OK response.
                     schema:
-                        $ref: '#/definitions/Committee'
+                        $ref: '#/definitions/CommitteeFullWithReadonlyAttributes'
                 "400":
                     description: Bad Request response.
                     schema:
@@ -203,10 +203,10 @@ paths:
                 - jwt_header_Authorization: []
         delete:
             tags:
-                - committee
-            summary: delete-committee committee
+                - committee-service
+            summary: delete-committee committee-service
             description: Delete Committee
-            operationId: committee#delete-committee
+            operationId: committee-service#delete-committee
             parameters:
                 - name: v
                   in: query
@@ -215,9 +215,9 @@ paths:
                   type: string
                   enum:
                     - "1"
-                - name: id
+                - name: uid
                   in: path
-                  description: Committee ID
+                  description: Committee UID -- v2 uid, not related to v1 id directly
                   required: true
                   type: string
                   format: uuid
@@ -262,13 +262,140 @@ paths:
                 - http
             security:
                 - jwt_header_Authorization: []
+    /committees/{uid}/settings:
+        get:
+            tags:
+                - committee-service
+            summary: get-committee-settings committee-service
+            description: Get Committee Settings
+            operationId: committee-service#get-committee-settings
+            parameters:
+                - name: v
+                  in: query
+                  description: Version of the API
+                  required: false
+                  type: string
+                  enum:
+                    - "1"
+                - name: uid
+                  in: path
+                  description: Committee UID -- v2 uid, not related to v1 id directly
+                  required: true
+                  type: string
+                  format: uuid
+                - name: Authorization
+                  in: header
+                  description: JWT token issued by Heimdall
+                  required: false
+                  type: string
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/CommitteeServiceGetCommitteeSettingsResponseBody'
+                    headers:
+                        ETag:
+                            description: ETag header value
+                            type: string
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/NotFoundError'
+                        required:
+                            - message
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        $ref: '#/definitions/InternalServerError'
+                        required:
+                            - message
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        $ref: '#/definitions/ServiceUnavailableError'
+                        required:
+                            - message
+            schemes:
+                - http
+            security:
+                - jwt_header_Authorization: []
+        put:
+            tags:
+                - committee-service
+            summary: update-committee-settings committee-service
+            description: Update Committee Settings
+            operationId: committee-service#update-committee-settings
+            parameters:
+                - name: v
+                  in: query
+                  description: Version of the API
+                  required: false
+                  type: string
+                  enum:
+                    - "1"
+                - name: uid
+                  in: path
+                  description: Committee UID -- v2 uid, not related to v1 id directly
+                  required: true
+                  type: string
+                  format: uuid
+                - name: Authorization
+                  in: header
+                  description: JWT token issued by Heimdall
+                  required: false
+                  type: string
+                - name: ETag
+                  in: header
+                  description: ETag header value
+                  required: false
+                  type: string
+                - name: Update-Committee-SettingsRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CommitteeServiceUpdateCommitteeSettingsRequestBody'
+                    required:
+                        - business_email_required
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/CommitteeSettingsWithReadonlyAttributes'
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        $ref: '#/definitions/BadRequestError'
+                        required:
+                            - message
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/NotFoundError'
+                        required:
+                            - message
+                "500":
+                    description: Internal Server Error response.
+                    schema:
+                        $ref: '#/definitions/InternalServerError'
+                        required:
+                            - message
+                "503":
+                    description: Service Unavailable response.
+                    schema:
+                        $ref: '#/definitions/ServiceUnavailableError'
+                        required:
+                            - message
+            schemes:
+                - http
+            security:
+                - jwt_header_Authorization: []
     /livez:
         get:
             tags:
-                - committee
-            summary: livez committee
+                - committee-service
+            summary: livez committee-service
             description: Check if the service is alive.
-            operationId: committee#livez
+            operationId: committee-service#livez
             produces:
                 - text/plain
             responses:
@@ -282,9 +409,9 @@ paths:
     /openapi.json:
         get:
             tags:
-                - committee
+                - committee-service
             summary: Download gen/http/openapi3.json
-            operationId: committee#/openapi.json
+            operationId: committee-service#/openapi.json
             responses:
                 "200":
                     description: File downloaded
@@ -295,10 +422,10 @@ paths:
     /readyz:
         get:
             tags:
-                - committee
-            summary: readyz committee
+                - committee-service
+            summary: readyz committee-service
             description: Check if the service is able to take inbound requests.
-            operationId: committee#readyz
+            operationId: committee-service#readyz
             produces:
                 - text/plain
             responses:
@@ -329,10 +456,19 @@ definitions:
             message: The request was invalid.
         required:
             - message
-    Committee:
-        title: Committee
+    CommitteeFull:
+        title: CommitteeFull
         type: object
         properties:
+            auditors:
+                type: array
+                items:
+                    type: string
+                    example: Sit nisi culpa alias odit inventore.
+                description: Auditor user IDs who can audit this committee
+                example:
+                    - auditor_user_id1
+                    - auditor_user_id2
             business_email_required:
                 type: boolean
                 description: Whether business email is required for committee members
@@ -378,34 +514,38 @@ definitions:
                 description: The description of the committee
                 example: Main technical oversight committee for the project
                 maxLength: 2000
+            display_name:
+                type: string
+                description: The display name of the committee
+                example: TSC Committee Calendar
+                maxLength: 100
             enable_voting:
                 type: boolean
                 description: Whether voting is enabled for this committee
                 default: false
                 example: true
-            id:
+            last_reviewed_at:
                 type: string
-                description: The unique identifier of the committee
-                example: 52ec9e74-e8d3-40d9-953c-bc2d2c6ae516
-                format: uuid
-            is_audit_enabled:
-                type: boolean
-                description: Whether audit logging is enabled for this committee
-                default: false
-                example: false
+                description: The timestamp when the committee was last reviewed
+                example: "2023-05-10T09:15:00Z"
+                format: date-time
+            last_reviewed_by:
+                type: string
+                description: The user ID who last reviewed this committee
+                example: user_id_12345
             name:
                 type: string
                 description: The name of the committee
                 example: Technical Steering Committee
                 maxLength: 100
-            parent_committee_id:
+            parent_uid:
                 type: string
-                description: The ID of the parent committee, should be empty if there is none
+                description: The UID of the parent committee -- v2 uid, not related to v1 id directly, should be empty if there is none
                 example: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
                 format: uuid
-            project_id:
+            project_uid:
                 type: string
-                description: The project identifier this committee belongs to -- v2 id, not related to v1 id directly
+                description: Project UID this committee belongs to -- v2 uid, not related to v1 id directly
                 example: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
                 format: uuid
             public:
@@ -413,11 +553,11 @@ definitions:
                 description: General committee visibility/access permissions
                 default: false
                 example: true
-            public_name:
-                type: string
-                description: The public display name of the committee
-                example: TSC Committee Calendar
-                maxLength: 100
+            requires_review:
+                type: boolean
+                description: Whether this committee is expected to be reviewed
+                default: false
+                example: true
             sso_group_enabled:
                 type: boolean
                 description: Whether SSO group integration is enabled
@@ -433,34 +573,177 @@ definitions:
                 type: array
                 items:
                     type: string
-                    example: Ex architecto minima exercitationem.
+                    example: Non aliquam est voluptas.
                 description: Manager user IDs who can edit/modify this committee
                 example:
                     - manager_user_id1
                     - manager_user_id2
         example:
+            auditors:
+                - auditor_user_id1
+                - auditor_user_id2
             business_email_required: false
             calendar:
                 public: true
             category: Technical Steering Committee
             description: Main technical oversight committee for the project
+            display_name: TSC Committee Calendar
             enable_voting: true
-            id: 52ec9e74-e8d3-40d9-953c-bc2d2c6ae516
-            is_audit_enabled: false
+            last_reviewed_at: "2023-05-10T09:15:00Z"
+            last_reviewed_by: user_id_12345
             name: Technical Steering Committee
-            parent_committee_id: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
-            project_id: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+            parent_uid: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+            project_uid: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
             public: true
-            public_name: TSC Committee Calendar
+            requires_review: true
             sso_group_enabled: true
             website: https://committee.example.org
             writers:
                 - manager_user_id1
                 - manager_user_id2
-    CommitteeCreateCommitteeRequestBody:
-        title: CommitteeCreateCommitteeRequestBody
+    CommitteeFullWithReadonlyAttributes:
+        title: CommitteeFullWithReadonlyAttributes
         type: object
         properties:
+            calendar:
+                type: object
+                properties:
+                    public:
+                        type: boolean
+                        description: Whether the committee calendar is publicly visible
+                        default: false
+                        example: true
+                description: Settings related to the committee calendar
+                example:
+                    public: true
+            category:
+                type: string
+                description: The category of the committee
+                example: Technical Steering Committee
+                enum:
+                    - Ambassador
+                    - Board
+                    - Code of Conduct
+                    - Committers
+                    - Expert Group
+                    - Finance Committee
+                    - Government Advisory Council
+                    - Legal Committee
+                    - Maintainers
+                    - Marketing Committee/Sub Committee
+                    - Marketing Mailing List
+                    - Marketing Oversight Committee/Marketing Advisory Committee
+                    - Other
+                    - Product Security
+                    - Special Interest Group
+                    - Technical Mailing List
+                    - Technical Oversight Committee/Technical Advisory Committee
+                    - Technical Steering Committee
+                    - Working Group
+            description:
+                type: string
+                description: The description of the committee
+                example: Main technical oversight committee for the project
+                maxLength: 2000
+            display_name:
+                type: string
+                description: The display name of the committee
+                example: TSC Committee Calendar
+                maxLength: 100
+            enable_voting:
+                type: boolean
+                description: Whether voting is enabled for this committee
+                default: false
+                example: true
+            name:
+                type: string
+                description: The name of the committee
+                example: Technical Steering Committee
+                maxLength: 100
+            parent_uid:
+                type: string
+                description: The UID of the parent committee -- v2 uid, not related to v1 id directly, should be empty if there is none
+                example: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+                format: uuid
+            project_uid:
+                type: string
+                description: Project UID this committee belongs to -- v2 uid, not related to v1 id directly
+                example: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+                format: uuid
+            public:
+                type: boolean
+                description: General committee visibility/access permissions
+                default: false
+                example: true
+            requires_review:
+                type: boolean
+                description: Whether this committee is expected to be reviewed
+                default: false
+                example: true
+            sso_group_enabled:
+                type: boolean
+                description: Whether SSO group integration is enabled
+                default: false
+                example: true
+            sso_group_name:
+                type: string
+                description: The name of the SSO group - read-only
+                example: lfx-committee-group
+            total_members:
+                type: integer
+                description: The total number of members in this committee
+                example: 15
+                format: int64
+                minimum: 0
+            total_voting_repos:
+                type: integer
+                description: The total number of repositories with voting permissions for this committee
+                example: 3
+                format: int64
+                minimum: 0
+            uid:
+                type: string
+                description: Committee UID -- v2 uid, not related to v1 id directly
+                example: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+                format: uuid
+            website:
+                type: string
+                description: The website URL of the committee
+                example: https://committee.example.org
+                format: uri
+                pattern: ^(https?://)?[^\s/$.?#].[^\s]*$
+        description: A full representation of LFX committees with sub-objects and readonly attributes.
+        example:
+            calendar:
+                public: true
+            category: Technical Steering Committee
+            description: Main technical oversight committee for the project
+            display_name: TSC Committee Calendar
+            enable_voting: true
+            name: Technical Steering Committee
+            parent_uid: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+            project_uid: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+            public: true
+            requires_review: true
+            sso_group_enabled: true
+            sso_group_name: lfx-committee-group
+            total_members: 15
+            total_voting_repos: 3
+            uid: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+            website: https://committee.example.org
+    CommitteeServiceCreateCommitteeRequestBody:
+        title: CommitteeServiceCreateCommitteeRequestBody
+        type: object
+        properties:
+            auditors:
+                type: array
+                items:
+                    type: string
+                    example: Dolorum aspernatur voluptatem harum veritatis quaerat dolorem.
+                description: Auditor user IDs who can audit this committee
+                example:
+                    - auditor_user_id1
+                    - auditor_user_id2
             business_email_required:
                 type: boolean
                 description: Whether business email is required for committee members
@@ -506,36 +789,50 @@ definitions:
                 description: The description of the committee
                 example: Main technical oversight committee for the project
                 maxLength: 2000
+            display_name:
+                type: string
+                description: The display name of the committee
+                example: TSC Committee Calendar
+                maxLength: 100
             enable_voting:
                 type: boolean
                 description: Whether voting is enabled for this committee
                 default: false
                 example: true
-            is_audit_enabled:
-                type: boolean
-                description: Whether audit logging is enabled for this committee
-                default: false
-                example: false
+            last_reviewed_at:
+                type: string
+                description: The timestamp when the committee was last reviewed
+                example: "2023-05-10T09:15:00Z"
+                format: date-time
+            last_reviewed_by:
+                type: string
+                description: The user ID who last reviewed this committee
+                example: user_id_12345
             name:
                 type: string
                 description: The name of the committee
                 example: Technical Steering Committee
                 maxLength: 100
-            parent_committee_id:
+            parent_uid:
                 type: string
-                description: The ID of the parent committee, should be empty if there is none
+                description: The UID of the parent committee -- v2 uid, not related to v1 id directly, should be empty if there is none
                 example: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+                format: uuid
+            project_uid:
+                type: string
+                description: Project UID this committee belongs to -- v2 uid, not related to v1 id directly
+                example: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
                 format: uuid
             public:
                 type: boolean
                 description: General committee visibility/access permissions
                 default: false
                 example: true
-            public_name:
-                type: string
-                description: The public display name of the committee
-                example: TSC Committee Calendar
-                maxLength: 100
+            requires_review:
+                type: boolean
+                description: Whether this committee is expected to be reviewed
+                default: false
+                example: true
             sso_group_enabled:
                 type: boolean
                 description: Whether SSO group integration is enabled
@@ -551,23 +848,29 @@ definitions:
                 type: array
                 items:
                     type: string
-                    example: Animi dicta placeat et quasi.
+                    example: Vitae sit voluptatem enim esse unde voluptatibus.
                 description: Manager user IDs who can edit/modify this committee
                 example:
                     - manager_user_id1
                     - manager_user_id2
         example:
+            auditors:
+                - auditor_user_id1
+                - auditor_user_id2
             business_email_required: false
             calendar:
                 public: true
             category: Technical Steering Committee
             description: Main technical oversight committee for the project
+            display_name: TSC Committee Calendar
             enable_voting: true
-            is_audit_enabled: false
+            last_reviewed_at: "2023-05-10T09:15:00Z"
+            last_reviewed_by: user_id_12345
             name: Technical Steering Committee
-            parent_committee_id: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+            parent_uid: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+            project_uid: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
             public: true
-            public_name: TSC Committee Calendar
+            requires_review: true
             sso_group_enabled: true
             website: https://committee.example.org
             writers:
@@ -576,18 +879,16 @@ definitions:
         required:
             - name
             - category
-    CommitteeGetCommitteeResponseBody:
-        title: CommitteeGetCommitteeResponseBody
-        $ref: '#/definitions/Committee'
-    CommitteeUpdateCommitteeRequestBody:
-        title: CommitteeUpdateCommitteeRequestBody
+    CommitteeServiceGetCommitteeBaseResponseBody:
+        title: CommitteeServiceGetCommitteeBaseResponseBody
+        $ref: '#/definitions/CommitteeFullWithReadonlyAttributes'
+    CommitteeServiceGetCommitteeSettingsResponseBody:
+        title: CommitteeServiceGetCommitteeSettingsResponseBody
+        $ref: '#/definitions/CommitteeSettingsWithReadonlyAttributes'
+    CommitteeServiceUpdateCommitteeBaseRequestBody:
+        title: CommitteeServiceUpdateCommitteeBaseRequestBody
         type: object
         properties:
-            business_email_required:
-                type: boolean
-                description: Whether business email is required for committee members
-                default: false
-                example: false
             calendar:
                 type: object
                 properties:
@@ -628,29 +929,29 @@ definitions:
                 description: The description of the committee
                 example: Main technical oversight committee for the project
                 maxLength: 2000
+            display_name:
+                type: string
+                description: The display name of the committee
+                example: TSC Committee Calendar
+                maxLength: 100
             enable_voting:
                 type: boolean
                 description: Whether voting is enabled for this committee
                 default: false
                 example: true
-            is_audit_enabled:
-                type: boolean
-                description: Whether audit logging is enabled for this committee
-                default: false
-                example: false
             name:
                 type: string
                 description: The name of the committee
                 example: Technical Steering Committee
                 maxLength: 100
-            parent_committee_id:
+            parent_uid:
                 type: string
-                description: The ID of the parent committee, should be empty if there is none
+                description: The UID of the parent committee -- v2 uid, not related to v1 id directly, should be empty if there is none
                 example: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
                 format: uuid
-            project_id:
+            project_uid:
                 type: string
-                description: The project identifier this committee belongs to -- v2 id, not related to v1 id directly
+                description: Project UID this committee belongs to -- v2 uid, not related to v1 id directly
                 example: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
                 format: uuid
             public:
@@ -658,11 +959,11 @@ definitions:
                 description: General committee visibility/access permissions
                 default: false
                 example: true
-            public_name:
-                type: string
-                description: The public display name of the committee
-                example: TSC Committee Calendar
-                maxLength: 100
+            requires_review:
+                type: boolean
+                description: Whether this committee is expected to be reviewed
+                default: false
+                example: true
             sso_group_enabled:
                 type: boolean
                 description: Whether SSO group integration is enabled
@@ -674,36 +975,112 @@ definitions:
                 example: https://committee.example.org
                 format: uri
                 pattern: ^(https?://)?[^\s/$.?#].[^\s]*$
+        example:
+            calendar:
+                public: true
+            category: Technical Steering Committee
+            description: Main technical oversight committee for the project
+            display_name: TSC Committee Calendar
+            enable_voting: true
+            name: Technical Steering Committee
+            parent_uid: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
+            project_uid: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+            public: true
+            requires_review: true
+            sso_group_enabled: true
+            website: https://committee.example.org
+        required:
+            - name
+            - category
+    CommitteeServiceUpdateCommitteeSettingsRequestBody:
+        title: CommitteeServiceUpdateCommitteeSettingsRequestBody
+        type: object
+        properties:
+            auditors:
+                type: array
+                items:
+                    type: string
+                    example: Debitis labore alias nesciunt quis.
+                description: Auditor user IDs who can audit this committee
+                example:
+                    - auditor_user_id1
+                    - auditor_user_id2
+            business_email_required:
+                type: boolean
+                description: Whether business email is required for committee members
+                default: false
+                example: false
+            last_reviewed_at:
+                type: string
+                description: The timestamp when the committee was last reviewed
+                example: "2023-05-10T09:15:00Z"
+                format: date-time
+            last_reviewed_by:
+                type: string
+                description: The user ID who last reviewed this committee
+                example: user_id_12345
             writers:
                 type: array
                 items:
                     type: string
-                    example: Maxime facilis laudantium ut quam quisquam et.
+                    example: Qui maxime recusandae et modi.
                 description: Manager user IDs who can edit/modify this committee
                 example:
                     - manager_user_id1
                     - manager_user_id2
         example:
+            auditors:
+                - auditor_user_id1
+                - auditor_user_id2
             business_email_required: false
-            calendar:
-                public: true
-            category: Technical Steering Committee
-            description: Main technical oversight committee for the project
-            enable_voting: true
-            is_audit_enabled: false
-            name: Technical Steering Committee
-            parent_committee_id: 90b147f2-7cdd-157a-a2f4-9d4a567123fc
-            project_id: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
-            public: true
-            public_name: TSC Committee Calendar
-            sso_group_enabled: true
-            website: https://committee.example.org
+            last_reviewed_at: "2023-05-10T09:15:00Z"
+            last_reviewed_by: user_id_12345
             writers:
                 - manager_user_id1
                 - manager_user_id2
         required:
-            - name
-            - category
+            - business_email_required
+    CommitteeSettingsWithReadonlyAttributes:
+        title: CommitteeSettingsWithReadonlyAttributes
+        type: object
+        properties:
+            business_email_required:
+                type: boolean
+                description: Whether business email is required for committee members
+                default: false
+                example: false
+            created_at:
+                type: string
+                description: The timestamp when the committee was created (read-only)
+                example: "2023-01-15T10:30:00Z"
+                format: date-time
+            last_reviewed_at:
+                type: string
+                description: The timestamp when the committee was last reviewed
+                example: "2023-05-10T09:15:00Z"
+                format: date-time
+            last_reviewed_by:
+                type: string
+                description: The user ID who last reviewed this committee
+                example: user_id_12345
+            uid:
+                type: string
+                description: Committee UID -- v2 uid, not related to v1 id directly
+                example: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+                format: uuid
+            updated_at:
+                type: string
+                description: The timestamp when the committee was last updated (read-only)
+                example: "2023-06-20T14:45:30Z"
+                format: date-time
+        description: A representation of LF Committee settings with readonly attributes.
+        example:
+            business_email_required: false
+            created_at: "2023-01-15T10:30:00Z"
+            last_reviewed_at: "2023-05-10T09:15:00Z"
+            last_reviewed_by: user_id_12345
+            uid: 7cad5a8d-19d0-41a4-81a6-043453daf9ee
+            updated_at: "2023-06-20T14:45:30Z"
     ConflictError:
         title: ConflictError
         type: object

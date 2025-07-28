@@ -14,7 +14,7 @@ import (
 	"net/http"
 	"os"
 
-	committeec "github.com/linuxfoundation/lfx-v2-committee-service/gen/http/committee/client"
+	committeeservicec "github.com/linuxfoundation/lfx-v2-committee-service/gen/http/committee_service/client"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -23,25 +23,32 @@ import (
 //
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
-	return `committee (create-committee|get-committee|update-committee|delete-committee|readyz|livez)
+	return `committee-service (create-committee|get-committee-base|update-committee-base|delete-committee|get-committee-settings|update-committee-settings|readyz|livez)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
-	return os.Args[0] + ` committee create-committee --body '{
+	return os.Args[0] + ` committee-service create-committee --body '{
+      "auditors": [
+         "auditor_user_id1",
+         "auditor_user_id2"
+      ],
       "business_email_required": false,
       "calendar": {
          "public": true
       },
       "category": "Technical Steering Committee",
       "description": "Main technical oversight committee for the project",
+      "display_name": "TSC Committee Calendar",
       "enable_voting": true,
-      "is_audit_enabled": false,
+      "last_reviewed_at": "2023-05-10T09:15:00Z",
+      "last_reviewed_by": "user_id_12345",
       "name": "Technical Steering Committee",
-      "parent_committee_id": "90b147f2-7cdd-157a-a2f4-9d4a567123fc",
+      "parent_uid": "90b147f2-7cdd-157a-a2f4-9d4a567123fc",
+      "project_uid": "7cad5a8d-19d0-41a4-81a6-043453daf9ee",
       "public": true,
-      "public_name": "TSC Committee Calendar",
+      "requires_review": true,
       "sso_group_enabled": true,
       "website": "https://committee.example.org",
       "writers": [
@@ -62,42 +69,56 @@ func ParseEndpoint(
 	restore bool,
 ) (goa.Endpoint, any, error) {
 	var (
-		committeeFlags = flag.NewFlagSet("committee", flag.ContinueOnError)
+		committeeServiceFlags = flag.NewFlagSet("committee-service", flag.ContinueOnError)
 
-		committeeCreateCommitteeFlags           = flag.NewFlagSet("create-committee", flag.ExitOnError)
-		committeeCreateCommitteeBodyFlag        = committeeCreateCommitteeFlags.String("body", "REQUIRED", "")
-		committeeCreateCommitteeVersionFlag     = committeeCreateCommitteeFlags.String("version", "", "")
-		committeeCreateCommitteeBearerTokenFlag = committeeCreateCommitteeFlags.String("bearer-token", "", "")
+		committeeServiceCreateCommitteeFlags           = flag.NewFlagSet("create-committee", flag.ExitOnError)
+		committeeServiceCreateCommitteeBodyFlag        = committeeServiceCreateCommitteeFlags.String("body", "REQUIRED", "")
+		committeeServiceCreateCommitteeVersionFlag     = committeeServiceCreateCommitteeFlags.String("version", "", "")
+		committeeServiceCreateCommitteeBearerTokenFlag = committeeServiceCreateCommitteeFlags.String("bearer-token", "", "")
 
-		committeeGetCommitteeFlags           = flag.NewFlagSet("get-committee", flag.ExitOnError)
-		committeeGetCommitteeIDFlag          = committeeGetCommitteeFlags.String("id", "REQUIRED", "Committee ID")
-		committeeGetCommitteeVersionFlag     = committeeGetCommitteeFlags.String("version", "", "")
-		committeeGetCommitteeBearerTokenFlag = committeeGetCommitteeFlags.String("bearer-token", "", "")
+		committeeServiceGetCommitteeBaseFlags           = flag.NewFlagSet("get-committee-base", flag.ExitOnError)
+		committeeServiceGetCommitteeBaseUIDFlag         = committeeServiceGetCommitteeBaseFlags.String("uid", "REQUIRED", "Committee UID -- v2 uid, not related to v1 id directly")
+		committeeServiceGetCommitteeBaseVersionFlag     = committeeServiceGetCommitteeBaseFlags.String("version", "", "")
+		committeeServiceGetCommitteeBaseBearerTokenFlag = committeeServiceGetCommitteeBaseFlags.String("bearer-token", "", "")
 
-		committeeUpdateCommitteeFlags           = flag.NewFlagSet("update-committee", flag.ExitOnError)
-		committeeUpdateCommitteeBodyFlag        = committeeUpdateCommitteeFlags.String("body", "REQUIRED", "")
-		committeeUpdateCommitteeIDFlag          = committeeUpdateCommitteeFlags.String("id", "REQUIRED", "Committee ID")
-		committeeUpdateCommitteeVersionFlag     = committeeUpdateCommitteeFlags.String("version", "", "")
-		committeeUpdateCommitteeBearerTokenFlag = committeeUpdateCommitteeFlags.String("bearer-token", "", "")
-		committeeUpdateCommitteeEtagFlag        = committeeUpdateCommitteeFlags.String("etag", "", "")
+		committeeServiceUpdateCommitteeBaseFlags           = flag.NewFlagSet("update-committee-base", flag.ExitOnError)
+		committeeServiceUpdateCommitteeBaseBodyFlag        = committeeServiceUpdateCommitteeBaseFlags.String("body", "REQUIRED", "")
+		committeeServiceUpdateCommitteeBaseUIDFlag         = committeeServiceUpdateCommitteeBaseFlags.String("uid", "REQUIRED", "Committee UID -- v2 uid, not related to v1 id directly")
+		committeeServiceUpdateCommitteeBaseVersionFlag     = committeeServiceUpdateCommitteeBaseFlags.String("version", "", "")
+		committeeServiceUpdateCommitteeBaseBearerTokenFlag = committeeServiceUpdateCommitteeBaseFlags.String("bearer-token", "", "")
+		committeeServiceUpdateCommitteeBaseEtagFlag        = committeeServiceUpdateCommitteeBaseFlags.String("etag", "", "")
 
-		committeeDeleteCommitteeFlags           = flag.NewFlagSet("delete-committee", flag.ExitOnError)
-		committeeDeleteCommitteeIDFlag          = committeeDeleteCommitteeFlags.String("id", "REQUIRED", "Committee ID")
-		committeeDeleteCommitteeVersionFlag     = committeeDeleteCommitteeFlags.String("version", "", "")
-		committeeDeleteCommitteeBearerTokenFlag = committeeDeleteCommitteeFlags.String("bearer-token", "", "")
-		committeeDeleteCommitteeEtagFlag        = committeeDeleteCommitteeFlags.String("etag", "", "")
+		committeeServiceDeleteCommitteeFlags           = flag.NewFlagSet("delete-committee", flag.ExitOnError)
+		committeeServiceDeleteCommitteeUIDFlag         = committeeServiceDeleteCommitteeFlags.String("uid", "REQUIRED", "Committee UID -- v2 uid, not related to v1 id directly")
+		committeeServiceDeleteCommitteeVersionFlag     = committeeServiceDeleteCommitteeFlags.String("version", "", "")
+		committeeServiceDeleteCommitteeBearerTokenFlag = committeeServiceDeleteCommitteeFlags.String("bearer-token", "", "")
+		committeeServiceDeleteCommitteeEtagFlag        = committeeServiceDeleteCommitteeFlags.String("etag", "", "")
 
-		committeeReadyzFlags = flag.NewFlagSet("readyz", flag.ExitOnError)
+		committeeServiceGetCommitteeSettingsFlags           = flag.NewFlagSet("get-committee-settings", flag.ExitOnError)
+		committeeServiceGetCommitteeSettingsUIDFlag         = committeeServiceGetCommitteeSettingsFlags.String("uid", "REQUIRED", "Committee UID -- v2 uid, not related to v1 id directly")
+		committeeServiceGetCommitteeSettingsVersionFlag     = committeeServiceGetCommitteeSettingsFlags.String("version", "", "")
+		committeeServiceGetCommitteeSettingsBearerTokenFlag = committeeServiceGetCommitteeSettingsFlags.String("bearer-token", "", "")
 
-		committeeLivezFlags = flag.NewFlagSet("livez", flag.ExitOnError)
+		committeeServiceUpdateCommitteeSettingsFlags           = flag.NewFlagSet("update-committee-settings", flag.ExitOnError)
+		committeeServiceUpdateCommitteeSettingsBodyFlag        = committeeServiceUpdateCommitteeSettingsFlags.String("body", "REQUIRED", "")
+		committeeServiceUpdateCommitteeSettingsUIDFlag         = committeeServiceUpdateCommitteeSettingsFlags.String("uid", "REQUIRED", "Committee UID -- v2 uid, not related to v1 id directly")
+		committeeServiceUpdateCommitteeSettingsVersionFlag     = committeeServiceUpdateCommitteeSettingsFlags.String("version", "", "")
+		committeeServiceUpdateCommitteeSettingsBearerTokenFlag = committeeServiceUpdateCommitteeSettingsFlags.String("bearer-token", "", "")
+		committeeServiceUpdateCommitteeSettingsEtagFlag        = committeeServiceUpdateCommitteeSettingsFlags.String("etag", "", "")
+
+		committeeServiceReadyzFlags = flag.NewFlagSet("readyz", flag.ExitOnError)
+
+		committeeServiceLivezFlags = flag.NewFlagSet("livez", flag.ExitOnError)
 	)
-	committeeFlags.Usage = committeeUsage
-	committeeCreateCommitteeFlags.Usage = committeeCreateCommitteeUsage
-	committeeGetCommitteeFlags.Usage = committeeGetCommitteeUsage
-	committeeUpdateCommitteeFlags.Usage = committeeUpdateCommitteeUsage
-	committeeDeleteCommitteeFlags.Usage = committeeDeleteCommitteeUsage
-	committeeReadyzFlags.Usage = committeeReadyzUsage
-	committeeLivezFlags.Usage = committeeLivezUsage
+	committeeServiceFlags.Usage = committeeServiceUsage
+	committeeServiceCreateCommitteeFlags.Usage = committeeServiceCreateCommitteeUsage
+	committeeServiceGetCommitteeBaseFlags.Usage = committeeServiceGetCommitteeBaseUsage
+	committeeServiceUpdateCommitteeBaseFlags.Usage = committeeServiceUpdateCommitteeBaseUsage
+	committeeServiceDeleteCommitteeFlags.Usage = committeeServiceDeleteCommitteeUsage
+	committeeServiceGetCommitteeSettingsFlags.Usage = committeeServiceGetCommitteeSettingsUsage
+	committeeServiceUpdateCommitteeSettingsFlags.Usage = committeeServiceUpdateCommitteeSettingsUsage
+	committeeServiceReadyzFlags.Usage = committeeServiceReadyzUsage
+	committeeServiceLivezFlags.Usage = committeeServiceLivezUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -114,8 +135,8 @@ func ParseEndpoint(
 	{
 		svcn = flag.Arg(0)
 		switch svcn {
-		case "committee":
-			svcf = committeeFlags
+		case "committee-service":
+			svcf = committeeServiceFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -131,25 +152,31 @@ func ParseEndpoint(
 	{
 		epn = svcf.Arg(0)
 		switch svcn {
-		case "committee":
+		case "committee-service":
 			switch epn {
 			case "create-committee":
-				epf = committeeCreateCommitteeFlags
+				epf = committeeServiceCreateCommitteeFlags
 
-			case "get-committee":
-				epf = committeeGetCommitteeFlags
+			case "get-committee-base":
+				epf = committeeServiceGetCommitteeBaseFlags
 
-			case "update-committee":
-				epf = committeeUpdateCommitteeFlags
+			case "update-committee-base":
+				epf = committeeServiceUpdateCommitteeBaseFlags
 
 			case "delete-committee":
-				epf = committeeDeleteCommitteeFlags
+				epf = committeeServiceDeleteCommitteeFlags
+
+			case "get-committee-settings":
+				epf = committeeServiceGetCommitteeSettingsFlags
+
+			case "update-committee-settings":
+				epf = committeeServiceUpdateCommitteeSettingsFlags
 
 			case "readyz":
-				epf = committeeReadyzFlags
+				epf = committeeServiceReadyzFlags
 
 			case "livez":
-				epf = committeeLivezFlags
+				epf = committeeServiceLivezFlags
 
 			}
 
@@ -173,21 +200,27 @@ func ParseEndpoint(
 	)
 	{
 		switch svcn {
-		case "committee":
-			c := committeec.NewClient(scheme, host, doer, enc, dec, restore)
+		case "committee-service":
+			c := committeeservicec.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
 			case "create-committee":
 				endpoint = c.CreateCommittee()
-				data, err = committeec.BuildCreateCommitteePayload(*committeeCreateCommitteeBodyFlag, *committeeCreateCommitteeVersionFlag, *committeeCreateCommitteeBearerTokenFlag)
-			case "get-committee":
-				endpoint = c.GetCommittee()
-				data, err = committeec.BuildGetCommitteePayload(*committeeGetCommitteeIDFlag, *committeeGetCommitteeVersionFlag, *committeeGetCommitteeBearerTokenFlag)
-			case "update-committee":
-				endpoint = c.UpdateCommittee()
-				data, err = committeec.BuildUpdateCommitteePayload(*committeeUpdateCommitteeBodyFlag, *committeeUpdateCommitteeIDFlag, *committeeUpdateCommitteeVersionFlag, *committeeUpdateCommitteeBearerTokenFlag, *committeeUpdateCommitteeEtagFlag)
+				data, err = committeeservicec.BuildCreateCommitteePayload(*committeeServiceCreateCommitteeBodyFlag, *committeeServiceCreateCommitteeVersionFlag, *committeeServiceCreateCommitteeBearerTokenFlag)
+			case "get-committee-base":
+				endpoint = c.GetCommitteeBase()
+				data, err = committeeservicec.BuildGetCommitteeBasePayload(*committeeServiceGetCommitteeBaseUIDFlag, *committeeServiceGetCommitteeBaseVersionFlag, *committeeServiceGetCommitteeBaseBearerTokenFlag)
+			case "update-committee-base":
+				endpoint = c.UpdateCommitteeBase()
+				data, err = committeeservicec.BuildUpdateCommitteeBasePayload(*committeeServiceUpdateCommitteeBaseBodyFlag, *committeeServiceUpdateCommitteeBaseUIDFlag, *committeeServiceUpdateCommitteeBaseVersionFlag, *committeeServiceUpdateCommitteeBaseBearerTokenFlag, *committeeServiceUpdateCommitteeBaseEtagFlag)
 			case "delete-committee":
 				endpoint = c.DeleteCommittee()
-				data, err = committeec.BuildDeleteCommitteePayload(*committeeDeleteCommitteeIDFlag, *committeeDeleteCommitteeVersionFlag, *committeeDeleteCommitteeBearerTokenFlag, *committeeDeleteCommitteeEtagFlag)
+				data, err = committeeservicec.BuildDeleteCommitteePayload(*committeeServiceDeleteCommitteeUIDFlag, *committeeServiceDeleteCommitteeVersionFlag, *committeeServiceDeleteCommitteeBearerTokenFlag, *committeeServiceDeleteCommitteeEtagFlag)
+			case "get-committee-settings":
+				endpoint = c.GetCommitteeSettings()
+				data, err = committeeservicec.BuildGetCommitteeSettingsPayload(*committeeServiceGetCommitteeSettingsUIDFlag, *committeeServiceGetCommitteeSettingsVersionFlag, *committeeServiceGetCommitteeSettingsBearerTokenFlag)
+			case "update-committee-settings":
+				endpoint = c.UpdateCommitteeSettings()
+				data, err = committeeservicec.BuildUpdateCommitteeSettingsPayload(*committeeServiceUpdateCommitteeSettingsBodyFlag, *committeeServiceUpdateCommitteeSettingsUIDFlag, *committeeServiceUpdateCommitteeSettingsVersionFlag, *committeeServiceUpdateCommitteeSettingsBearerTokenFlag, *committeeServiceUpdateCommitteeSettingsEtagFlag)
 			case "readyz":
 				endpoint = c.Readyz()
 			case "livez":
@@ -202,27 +235,29 @@ func ParseEndpoint(
 	return endpoint, data, nil
 }
 
-// committeeUsage displays the usage of the committee command and its
-// subcommands.
-func committeeUsage() {
+// committeeServiceUsage displays the usage of the committee-service command
+// and its subcommands.
+func committeeServiceUsage() {
 	fmt.Fprintf(os.Stderr, `Committee management service
 Usage:
-    %[1]s [globalflags] committee COMMAND [flags]
+    %[1]s [globalflags] committee-service COMMAND [flags]
 
 COMMAND:
     create-committee: Create Committee
-    get-committee: Get Committee
-    update-committee: Update Committee
+    get-committee-base: Get Committee
+    update-committee-base: Update Committee
     delete-committee: Delete Committee
+    get-committee-settings: Get Committee Settings
+    update-committee-settings: Update Committee Settings
     readyz: Check if the service is able to take inbound requests.
     livez: Check if the service is alive.
 
 Additional help:
-    %[1]s committee COMMAND --help
+    %[1]s committee-service COMMAND --help
 `, os.Args[0])
 }
-func committeeCreateCommitteeUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee create-committee -body JSON -version STRING -bearer-token STRING
+func committeeServiceCreateCommitteeUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee-service create-committee -body JSON -version STRING -bearer-token STRING
 
 Create Committee
     -body JSON: 
@@ -230,19 +265,26 @@ Create Committee
     -bearer-token STRING: 
 
 Example:
-    %[1]s committee create-committee --body '{
+    %[1]s committee-service create-committee --body '{
+      "auditors": [
+         "auditor_user_id1",
+         "auditor_user_id2"
+      ],
       "business_email_required": false,
       "calendar": {
          "public": true
       },
       "category": "Technical Steering Committee",
       "description": "Main technical oversight committee for the project",
+      "display_name": "TSC Committee Calendar",
       "enable_voting": true,
-      "is_audit_enabled": false,
+      "last_reviewed_at": "2023-05-10T09:15:00Z",
+      "last_reviewed_by": "user_id_12345",
       "name": "Technical Steering Committee",
-      "parent_committee_id": "90b147f2-7cdd-157a-a2f4-9d4a567123fc",
+      "parent_uid": "90b147f2-7cdd-157a-a2f4-9d4a567123fc",
+      "project_uid": "7cad5a8d-19d0-41a4-81a6-043453daf9ee",
       "public": true,
-      "public_name": "TSC Committee Calendar",
+      "requires_review": true,
       "sso_group_enabled": true,
       "website": "https://committee.example.org",
       "writers": [
@@ -253,84 +295,119 @@ Example:
 `, os.Args[0])
 }
 
-func committeeGetCommitteeUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee get-committee -id STRING -version STRING -bearer-token STRING
+func committeeServiceGetCommitteeBaseUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee-service get-committee-base -uid STRING -version STRING -bearer-token STRING
 
 Get Committee
-    -id STRING: Committee ID
+    -uid STRING: Committee UID -- v2 uid, not related to v1 id directly
     -version STRING: 
     -bearer-token STRING: 
 
 Example:
-    %[1]s committee get-committee --id "4132e886-3936-4ce3-84d2-f690a3b77be0" --version "1" --bearer-token "eyJhbGci..."
+    %[1]s committee-service get-committee-base --uid "7cad5a8d-19d0-41a4-81a6-043453daf9ee" --version "1" --bearer-token "eyJhbGci..."
 `, os.Args[0])
 }
 
-func committeeUpdateCommitteeUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee update-committee -body JSON -id STRING -version STRING -bearer-token STRING -etag STRING
+func committeeServiceUpdateCommitteeBaseUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee-service update-committee-base -body JSON -uid STRING -version STRING -bearer-token STRING -etag STRING
 
 Update Committee
     -body JSON: 
-    -id STRING: Committee ID
+    -uid STRING: Committee UID -- v2 uid, not related to v1 id directly
     -version STRING: 
     -bearer-token STRING: 
     -etag STRING: 
 
 Example:
-    %[1]s committee update-committee --body '{
-      "business_email_required": false,
+    %[1]s committee-service update-committee-base --body '{
       "calendar": {
          "public": true
       },
       "category": "Technical Steering Committee",
       "description": "Main technical oversight committee for the project",
+      "display_name": "TSC Committee Calendar",
       "enable_voting": true,
-      "is_audit_enabled": false,
       "name": "Technical Steering Committee",
-      "parent_committee_id": "90b147f2-7cdd-157a-a2f4-9d4a567123fc",
-      "project_id": "7cad5a8d-19d0-41a4-81a6-043453daf9ee",
+      "parent_uid": "90b147f2-7cdd-157a-a2f4-9d4a567123fc",
+      "project_uid": "7cad5a8d-19d0-41a4-81a6-043453daf9ee",
       "public": true,
-      "public_name": "TSC Committee Calendar",
+      "requires_review": true,
       "sso_group_enabled": true,
-      "website": "https://committee.example.org",
-      "writers": [
-         "manager_user_id1",
-         "manager_user_id2"
-      ]
-   }' --id "ac6a9e25-9d87-4d16-a0fc-680e85ce9908" --version "1" --bearer-token "eyJhbGci..." --etag "123"
+      "website": "https://committee.example.org"
+   }' --uid "7cad5a8d-19d0-41a4-81a6-043453daf9ee" --version "1" --bearer-token "eyJhbGci..." --etag "123"
 `, os.Args[0])
 }
 
-func committeeDeleteCommitteeUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee delete-committee -id STRING -version STRING -bearer-token STRING -etag STRING
+func committeeServiceDeleteCommitteeUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee-service delete-committee -uid STRING -version STRING -bearer-token STRING -etag STRING
 
 Delete Committee
-    -id STRING: Committee ID
+    -uid STRING: Committee UID -- v2 uid, not related to v1 id directly
     -version STRING: 
     -bearer-token STRING: 
     -etag STRING: 
 
 Example:
-    %[1]s committee delete-committee --id "3dbd821c-5105-4267-a404-8a761c693e18" --version "1" --bearer-token "eyJhbGci..." --etag "123"
+    %[1]s committee-service delete-committee --uid "7cad5a8d-19d0-41a4-81a6-043453daf9ee" --version "1" --bearer-token "eyJhbGci..." --etag "123"
 `, os.Args[0])
 }
 
-func committeeReadyzUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee readyz
+func committeeServiceGetCommitteeSettingsUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee-service get-committee-settings -uid STRING -version STRING -bearer-token STRING
+
+Get Committee Settings
+    -uid STRING: Committee UID -- v2 uid, not related to v1 id directly
+    -version STRING: 
+    -bearer-token STRING: 
+
+Example:
+    %[1]s committee-service get-committee-settings --uid "7cad5a8d-19d0-41a4-81a6-043453daf9ee" --version "1" --bearer-token "eyJhbGci..."
+`, os.Args[0])
+}
+
+func committeeServiceUpdateCommitteeSettingsUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee-service update-committee-settings -body JSON -uid STRING -version STRING -bearer-token STRING -etag STRING
+
+Update Committee Settings
+    -body JSON: 
+    -uid STRING: Committee UID -- v2 uid, not related to v1 id directly
+    -version STRING: 
+    -bearer-token STRING: 
+    -etag STRING: 
+
+Example:
+    %[1]s committee-service update-committee-settings --body '{
+      "auditors": [
+         "auditor_user_id1",
+         "auditor_user_id2"
+      ],
+      "business_email_required": false,
+      "last_reviewed_at": "2023-05-10T09:15:00Z",
+      "last_reviewed_by": "user_id_12345",
+      "writers": [
+         "manager_user_id1",
+         "manager_user_id2"
+      ]
+   }' --uid "7cad5a8d-19d0-41a4-81a6-043453daf9ee" --version "1" --bearer-token "eyJhbGci..." --etag "123"
+`, os.Args[0])
+}
+
+func committeeServiceReadyzUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee-service readyz
 
 Check if the service is able to take inbound requests.
 
 Example:
-    %[1]s committee readyz
+    %[1]s committee-service readyz
 `, os.Args[0])
 }
 
-func committeeLivezUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee livez
+func committeeServiceLivezUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] committee-service livez
 
 Check if the service is alive.
 
 Example:
-    %[1]s committee livez
+    %[1]s committee-service livez
 `, os.Args[0])
 }
