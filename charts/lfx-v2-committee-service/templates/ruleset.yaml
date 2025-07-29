@@ -8,7 +8,7 @@ metadata:
   namespace: lfx
 spec:
   rules:
-    - id: "rule:lfx:lfx-v2-committee-service:create_committee"
+    - id: "rule:lfx:lfx-v2-committee-service:committees:create"
       match:
         methods:
           - POST
@@ -28,7 +28,7 @@ spec:
           config:
             values:
               relation: writer
-              object: "project:{{ .Request.Body.project_id }}"
+              object: "project:{{ .Request.Body.project_uid }}"
         {{- else -}}
         - authorizer: allow_all
         {{- end }}
@@ -36,8 +36,8 @@ spec:
           config:
             values:
               aud: lfx-v2-committee-service
-    
-    - id: "rule:lfx:lfx-v2-committee-service:committees:get_committee"
+
+    - id: "rule:lfx:lfx-v2-committee-service:committees:get"
       match:
         methods:
           - GET
@@ -65,7 +65,7 @@ spec:
             values:
               aud: lfx-v2-committee-service
 
-    - id: "rule:lfx:lfx-v2-committee-service:committees:get_committee_settings"
+    - id: "rule:lfx:lfx-v2-committee-service:committee_settings:get"
       match:
         methods:
           - GET
@@ -93,7 +93,7 @@ spec:
             values:
               aud: lfx-v2-committee-service
 
-    - id: "rule:lfx:lfx-v2-committee-service:committees:update_committee_base"
+    - id: "rule:lfx:lfx-v2-committee-service:committees:update"
       match:
         methods:
           - PUT
@@ -121,7 +121,7 @@ spec:
             values:
               aud: lfx-v2-committee-service
 
-    - id: "rule:lfx:lfx-v2-committee-service:committees:update_committee_settings"
+    - id: "rule:lfx:lfx-v2-committee-service:committee_settings:update"
       match:
         methods:
           - PUT
@@ -149,7 +149,7 @@ spec:
             values:
               aud: lfx-v2-committee-service
 
-    - id: "rule:lfx:lfx-v2-committee-service:committees:delete_committee"
+    - id: "rule:lfx:lfx-v2-committee-service:committees:delete"
       match:
         methods:
           - DELETE
