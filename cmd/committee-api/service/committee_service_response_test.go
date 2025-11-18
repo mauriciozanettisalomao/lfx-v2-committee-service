@@ -1240,7 +1240,3 @@ func TestConvertPayloadToUpdateMember(t *testing.T) {
 func stringPtr(s string) *string {
 	return &s
 }
-
-func intPtr(i int) *int {
-	return &i
-}
