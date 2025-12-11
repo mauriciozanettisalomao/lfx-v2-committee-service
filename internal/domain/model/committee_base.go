@@ -148,8 +148,3 @@ func (c *Committee) Tags() []string {
 
 	return tags
 }
-
-// IsGovernmentAdvisoryCouncil returns true if the committee is a Government Advisory Council
-func (c *Committee) IsGovernmentAdvisoryCouncil() bool {
-	return c.Category == categoryGovernmentAdvisoryCouncil
-}

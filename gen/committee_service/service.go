@@ -195,10 +195,6 @@ type CommitteeMemberFullWithReadonlyAttributes struct {
 		// Voting end date
 		EndDate *string
 	}
-	// Government agency (for GAC members)
-	Agency *string
-	// Country (for GAC members)
-	Country *string
 	// Organization information for the committee member
 	Organization *struct {
 		// Organization ID
@@ -275,10 +271,6 @@ type CreateCommitteeMemberPayload struct {
 		// Voting end date
 		EndDate *string
 	}
-	// Government agency (for GAC members)
-	Agency *string
-	// Country (for GAC members)
-	Country *string
 	// Organization information for the committee member
 	Organization *struct {
 		// Organization ID
@@ -527,10 +519,6 @@ type UpdateCommitteeMemberPayload struct {
 		// Voting end date
 		EndDate *string
 	}
-	// Government agency (for GAC members)
-	Agency *string
-	// Country (for GAC members)
-	Country *string
 	// Organization information for the committee member
 	Organization *struct {
 		// Organization ID

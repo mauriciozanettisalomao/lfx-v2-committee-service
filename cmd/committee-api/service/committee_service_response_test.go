@@ -652,8 +652,6 @@ func TestConvertMemberPayloadToDomain(t *testing.T) {
 					StartDate: stringPtr("2024-01-01"),
 					EndDate:   stringPtr("2024-12-31"),
 				},
-				Agency:  stringPtr("Test Agency"),
-				Country: stringPtr("USA"),
 				Organization: &struct {
 					ID      *string
 					Name    *string
@@ -684,8 +682,6 @@ func TestConvertMemberPayloadToDomain(t *testing.T) {
 						StartDate: "2024-01-01",
 						EndDate:   "2024-12-31",
 					},
-					Agency:  "Test Agency",
-					Country: "USA",
 					Organization: model.CommitteeMemberOrganization{
 						ID:      "abc",
 						Name:    "Test Organization",
@@ -724,8 +720,6 @@ func TestConvertMemberPayloadToDomain(t *testing.T) {
 				Status:       "active",
 				Role:         nil,
 				Voting:       nil,
-				Agency:       nil,
-				Country:      nil,
 				Organization: nil,
 			},
 			expected: &model.CommitteeMember{
@@ -845,8 +839,6 @@ func TestConvertMemberDomainToFullResponse(t *testing.T) {
 						StartDate: "2024-01-01",
 						EndDate:   "2024-12-31",
 					},
-					Agency:  "Test Agency",
-					Country: "USA",
 					Organization: model.CommitteeMemberOrganization{
 						ID:      "org-123",
 						Name:    "Test Organization",
@@ -867,8 +859,6 @@ func TestConvertMemberDomainToFullResponse(t *testing.T) {
 				JobTitle:     stringPtr("Senior Software Engineer"),
 				AppointedBy:  "committee-chair",
 				Status:       "active",
-				Agency:       stringPtr("Test Agency"),
-				Country:      stringPtr("USA"),
 				Role: &struct {
 					Name      string
 					StartDate *string
@@ -922,8 +912,6 @@ func TestConvertMemberDomainToFullResponse(t *testing.T) {
 				FirstName:    nil,
 				LastName:     nil,
 				JobTitle:     nil,
-				Agency:       nil,
-				Country:      nil,
 				Role:         nil,
 				Voting:       nil,
 				Organization: nil,
@@ -953,8 +941,6 @@ func TestConvertMemberDomainToFullResponse(t *testing.T) {
 				FirstName:    nil,
 				LastName:     nil,
 				JobTitle:     nil,
-				Agency:       nil,
-				Country:      nil,
 				Role:         nil,
 				Voting:       nil,
 				Organization: nil,
@@ -994,8 +980,6 @@ func TestConvertMemberDomainToFullResponse(t *testing.T) {
 				FirstName: nil,
 				LastName:  nil,
 				JobTitle:  nil,
-				Agency:    nil,
-				Country:   nil,
 				Role: &struct {
 					Name      string
 					StartDate *string
@@ -1064,8 +1048,6 @@ func TestConvertPayloadToUpdateMember(t *testing.T) {
 					StartDate: stringPtr("2023-01-01"),
 					EndDate:   stringPtr("2024-01-01"),
 				},
-				Agency:  stringPtr("Test Agency"),
-				Country: stringPtr("US"),
 				Organization: &struct {
 					ID      *string
 					Name    *string
@@ -1097,8 +1079,6 @@ func TestConvertPayloadToUpdateMember(t *testing.T) {
 						StartDate: "2023-01-01",
 						EndDate:   "2024-01-01",
 					},
-					Agency:  "Test Agency",
-					Country: "US",
 					Organization: model.CommitteeMemberOrganization{
 						ID:      "org-123",
 						Name:    "Test Org",
@@ -1145,8 +1125,6 @@ func TestConvertPayloadToUpdateMember(t *testing.T) {
 				JobTitle:     nil,
 				Role:         nil,
 				Voting:       nil,
-				Agency:       nil,
-				Country:      nil,
 				Organization: nil,
 			},
 			expected: &model.CommitteeMember{
