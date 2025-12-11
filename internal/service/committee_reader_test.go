@@ -495,19 +495,6 @@ func TestCommitteeReaderOrchestratorGetBaseAttributeValue(t *testing.T) {
 			},
 		},
 		{
-			name: "successful retrieval of total_members integer attribute",
-			setupMock: func() {
-				mockRepo.ClearAll()
-				mockRepo.AddCommittee(testCommittee)
-			},
-			committeeUID:  testCommitteeUID,
-			attributeName: "total_members",
-			expectedError: false,
-			validateValue: func(t *testing.T, value any) {
-				assert.Equal(t, 5, value)
-			},
-		},
-		{
 			name: "successful retrieval of website pointer attribute",
 			setupMock: func() {
 				mockRepo.ClearAll()

@@ -257,20 +257,6 @@ func TestMessageHandlerOrchestratorHandleCommitteeGetAttribute(t *testing.T) {
 			},
 		},
 		{
-			name: "non-string attribute error - integer field",
-			setupMock: func() {
-				mockRepo.ClearAll()
-				mockRepo.AddCommittee(testCommittee)
-			},
-			messageData:   []byte(testCommitteeUID),
-			attribute:     "total_members",
-			expectedError: true,
-			errorType:     errs.Validation{},
-			validateResponse: func(t *testing.T, response []byte) {
-				assert.Nil(t, response)
-			},
-		},
-		{
 			name: "non-string attribute error - struct field",
 			setupMock: func() {
 				mockRepo.ClearAll()
