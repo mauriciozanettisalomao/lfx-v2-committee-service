@@ -184,12 +184,6 @@ func (s *committeeServicesrvc) convertDomainToFullResponse(response *model.Commi
 	if response.SSOGroupName != "" {
 		result.SsoGroupName = &response.SSOGroupName
 	}
-	if response.TotalMembers > 0 {
-		result.TotalMembers = &response.TotalMembers
-	}
-	if response.TotalVotingRepos > 0 {
-		result.TotalVotingRepos = &response.TotalVotingRepos
-	}
 
 	// Handle Calendar mapping
 	result.Calendar = &struct {
@@ -253,12 +247,6 @@ func (s *committeeServicesrvc) convertBaseToResponse(base *model.CommitteeBase) 
 	}
 	if base.SSOGroupName != "" {
 		result.SsoGroupName = &base.SSOGroupName
-	}
-	if base.TotalMembers > 0 {
-		result.TotalMembers = &base.TotalMembers
-	}
-	if base.TotalVotingRepos > 0 {
-		result.TotalVotingRepos = &base.TotalVotingRepos
 	}
 
 	// Handle Calendar mapping
