@@ -26,6 +26,20 @@ const (
 	ActionUpdated MessageAction = "updated"
 	// ActionDeleted is the action for a resource deletion message.
 	ActionDeleted MessageAction = "deleted"
+
+	// PolicyVisibilityName is the name of the visibility policy.
+	PolicyVisibilityName = "visibility_policy"
+	// PolicyVisibilityAllowsBasicProfile is the name of the policy that allows basic profile visibility.
+	PolicyVisibilityAllowsBasicProfile = "basic_profile"
+	// PolicyVisibilityHidesProfile is the name of the policy that hides profile visibility.
+	PolicyVisibilityHidesProfile = "hidden"
+)
+
+var (
+	policyVisibilityValuesMap = map[string]string{
+		PolicyVisibilityAllowsBasicProfile: "allows_basic_profile",
+		PolicyVisibilityHidesProfile:       "hides_basic_profile",
+	}
 )
 
 // CommitteeMemberMessageData is a wrapper that contains context for publishing messages
@@ -109,6 +123,16 @@ type CommitteeAccessMessage struct {
 	// e.g. "project" and it's value is the project UID.
 	// e.g. "parent" and it's value is the parent UID.
 	References map[string]string `json:"references"`
+	// Policies are used to store the policies of the object,
+	// e.g. "visibility_policy -> allows_basic_profile" and it's value is the policy definition: "basic_profile".
+	Policy []CommitteePolicyAccessMessage `json:"policies"`
+}
+
+// CommitteePolicyAccessMessage represents a single policy in the CommitteeAccessMessage
+type CommitteePolicyAccessMessage struct {
+	Name     string `json:"name"`
+	Relation string `json:"relation"`
+	Value    string `json:"value"`
 }
 
 // CommitteeMemberUpdateEventData represents the data structure for committee member update events
@@ -139,6 +163,15 @@ type ResourceType string
 const (
 	ResourceCommitteeMember ResourceType = "committee_member"
 )
+
+// SetVisibilityPolicy sets a visibility policy to the CommitteeAccessMessage based on the policy name.
+func (c *CommitteePolicyAccessMessage) SetVisibilityPolicy(value string) {
+	if relation, exists := policyVisibilityValuesMap[value]; exists {
+		c.Name = PolicyVisibilityName
+		c.Relation = relation
+		c.Value = value
+	}
+}
 
 // Build creates a CommitteeEvent from the resource type, action and input data
 func (e *CommitteeEvent) Build(ctx context.Context, resource ResourceType, action MessageAction, input any) (*CommitteeEvent, error) {
