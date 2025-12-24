@@ -29,9 +29,9 @@ const (
 
 	// PolicyVisibilityName is the name of the visibility policy.
 	PolicyVisibilityName = "visibility_policy"
-	// PolicyVisibilityAllowsBasicProfile is the name of the policy that allows basic profile visibility.
+	// PolicyVisibilityAllowsBasicProfile is the value for the visibility policy that allows basic profile visibility.
 	PolicyVisibilityAllowsBasicProfile = "basic_profile"
-	// PolicyVisibilityHidesProfile is the name of the policy that hides profile visibility.
+	// PolicyVisibilityHidesProfile is the value for the visibility policy that hides profile visibility.
 	PolicyVisibilityHidesProfile = "hidden"
 )
 
@@ -123,8 +123,9 @@ type CommitteeAccessMessage struct {
 	// e.g. "project" and it's value is the project UID.
 	// e.g. "parent" and it's value is the parent UID.
 	References map[string]string `json:"references"`
-	// Policies are used to store the policies of the object,
-	// e.g. "visibility_policy -> allows_basic_profile" and it's value is the policy definition: "basic_profile".
+	// Policies are used to store the policies of the object. Each policy has a name,
+	// a relation, and a value, e.g. name: "visibility_policy", relation: "allows_basic_profile",
+	// value: "basic_profile".
 	Policy []CommitteePolicyAccessMessage `json:"policies"`
 }
 
@@ -164,7 +165,7 @@ const (
 	ResourceCommitteeMember ResourceType = "committee_member"
 )
 
-// SetVisibilityPolicy sets a visibility policy to the CommitteeAccessMessage based on the policy name.
+// SetVisibilityPolicy sets a visibility policy on the CommitteePolicyAccessMessage based on the policy value.
 func (c *CommitteePolicyAccessMessage) SetVisibilityPolicy(value string) {
 	if relation, exists := policyVisibilityValuesMap[value]; exists {
 		c.Name = PolicyVisibilityName
