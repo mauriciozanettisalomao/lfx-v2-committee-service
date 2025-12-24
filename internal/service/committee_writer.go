@@ -242,7 +242,7 @@ func (uc *committeeWriterOrchestrator) buildAccessControlMessage(ctx context.Con
 	// default - hidden
 	visibilityPolicy := model.CommitteePolicyAccessMessage{}
 	visibilityPolicy.SetVisibilityPolicy(model.PolicyVisibilityHidesProfile)
-	if committee.MemberVisibility != "" {
+	if committee.CommitteeSettings != nil && committee.MemberVisibility != "" {
 		// if exist, it overrides default
 		visibilityPolicy.SetVisibilityPolicy(committee.MemberVisibility)
 	}
