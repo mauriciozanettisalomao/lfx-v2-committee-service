@@ -75,7 +75,7 @@ func (uc *committeeWriterOrchestrator) CreateMember(ctx context.Context, member 
 	)
 
 	now := time.Now()
-	member.UID = uuid.New().String()
+	member.CommitteeMemberBase.UID = uuid.New().String()
 	member.CreatedAt = now
 	member.UpdatedAt = now
 
@@ -220,11 +220,11 @@ func (uc *committeeWriterOrchestrator) CreateMember(ctx context.Context, member 
 		rollbackRequired = true
 		return nil, errCreate
 	}
-	keys = append(keys, member.UID)
+	keys = append(keys, member.UID())
 
 	slog.DebugContext(ctx, "committee member created successfully",
 		"committee_uid", member.CommitteeUID,
-		"member_uid", member.UID,
+		"member_uid", member.UID(),
 		"member_email", redaction.RedactEmail(member.Email),
 		"member_username", redaction.Redact(member.Username),
 	)
@@ -250,7 +250,7 @@ func (uc *committeeWriterOrchestrator) CreateMember(ctx context.Context, member 
 		slog.WarnContext(ctx, "failed to publish member messages",
 			"error", errPublish,
 			"committee_uid", member.CommitteeUID,
-			"member_uid", member.UID,
+			"member_uid", member.UID(),
 		)
 	}
 
@@ -260,7 +260,7 @@ func (uc *committeeWriterOrchestrator) CreateMember(ctx context.Context, member 
 // UpdateMember updates an existing committee member
 func (uc *committeeWriterOrchestrator) UpdateMember(ctx context.Context, member *model.CommitteeMember, revision uint64, sync bool) (*model.CommitteeMember, error) {
 	slog.DebugContext(ctx, "executing update committee member use case",
-		"member_uid", member.UID,
+		"member_uid", member.UID(),
 		"committee_uid", member.CommitteeUID,
 		"member_email", redaction.RedactEmail(member.Email),
 		"member_username", redaction.Redact(member.Username),
@@ -294,11 +294,11 @@ func (uc *committeeWriterOrchestrator) UpdateMember(ctx context.Context, member 
 	}()
 
 	// Step 1: Retrieve existing member data from the repository
-	existing, existingRevision, errGet := uc.committeeReader.GetMember(ctx, member.UID)
+	existing, existingRevision, errGet := uc.committeeReader.GetMember(ctx, member.UID())
 	if errGet != nil {
 		slog.ErrorContext(ctx, "failed to retrieve existing committee member",
 			"error", errGet,
-			"member_uid", member.UID,
+			"member_uid", member.UID(),
 		)
 		return nil, errGet
 	}
@@ -309,7 +309,7 @@ func (uc *committeeWriterOrchestrator) UpdateMember(ctx context.Context, member 
 		slog.WarnContext(ctx, "revision mismatch during member update",
 			"expected_revision", revision,
 			"current_revision", existingRevision,
-			"member_uid", member.UID,
+			"member_uid", member.UID(),
 		)
 		return nil, errs.NewConflict("committee member has been modified by another process")
 	}
@@ -318,14 +318,14 @@ func (uc *committeeWriterOrchestrator) UpdateMember(ctx context.Context, member 
 	if existing.CommitteeUID != member.CommitteeUID {
 		slog.ErrorContext(ctx, "committee member does not belong to the requested committee",
 			"committee_uid", member.CommitteeUID,
-			"member_uid", member.UID,
+			"member_uid", member.UID(),
 			"member_committee_uid", existing.CommitteeUID,
 		)
 		return nil, errs.NewValidation("committee member does not belong to the requested committee")
 	}
 
 	slog.DebugContext(ctx, "existing committee member retrieved",
-		"member_uid", existing.UID,
+		"member_uid", existing.UID(),
 		"existing_email", redaction.RedactEmail(existing.Email),
 		"existing_username", redaction.Redact(existing.Username),
 		"existing_organization", existing.Organization.Name,
@@ -358,7 +358,7 @@ func (uc *committeeWriterOrchestrator) UpdateMember(ctx context.Context, member 
 	if errValidation := member.Validate(fullCommittee); errValidation != nil {
 		slog.ErrorContext(ctx, "committee member validation failed during update",
 			"error", errValidation,
-			"member_uid", member.UID,
+			"member_uid", member.UID(),
 			"committee_uid", member.CommitteeUID,
 			"committee_category", committee.Category,
 			"member_email", redaction.RedactEmail(member.Email),
@@ -486,7 +486,7 @@ func (uc *committeeWriterOrchestrator) UpdateMember(ctx context.Context, member 
 
 	// Step 7: Merge existing data with updated fields
 	// Preserve immutable fields
-	member.UID = existing.UID
+	member.CommitteeMemberBase.UID = existing.UID()
 	member.CreatedAt = existing.CreatedAt
 	member.UpdatedAt = time.Now()
 
@@ -756,30 +756,48 @@ func (uc *committeeWriterOrchestrator) publishMemberMessages(ctx context.Context
 		"action", action,
 	)
 
+	//
 	// Build indexer message for the member
-	indexerMessage := model.CommitteeIndexerMessage{
-		Action: action,
-	}
+	//
+	// Split the object as basic and sensitive data
+	var committeeIndexerMessages []*model.CommitteeIndexerMessage
+	setIndexerMessage := func(action model.MessageAction, memberData any) (*model.CommitteeIndexerMessage, error) {
 
-	// Customize the indexer message based on the action
-	switch action {
-	case model.ActionCreated, model.ActionUpdated:
-		// Add tags for create/update operations (when we have the full member data)
-		indexerMessage.Tags = data.Member.Tags()
-		indexerMessage.Data = data.Member
-	case model.ActionDeleted:
-		// Indexer message only expects the UID for deleted operations
-		indexerMessage.Data = data.Member.UID
-	}
+		indexerMessage := model.CommitteeIndexerMessage{
+			Action: action,
+		}
 
-	indexerMessageBuild, errBuildIndexerMessage := indexerMessage.Build(ctx, indexerMessage.Data)
-	if errBuildIndexerMessage != nil {
-		slog.ErrorContext(ctx, "failed to build member indexer message",
-			"error", errBuildIndexerMessage,
-			"action", action,
-		)
-		return errs.NewUnexpected("failed to build member indexer message", errBuildIndexerMessage)
+		// Customize the indexer message based on the action
+		switch action {
+		case model.ActionCreated, model.ActionUpdated:
+			// Add tags for create/update operations (when we have the full member data)
+			indexerMessage.Tags = data.Member.Tags()
+			indexerMessage.Data = memberData
+		case model.ActionDeleted:
+			// Indexer message only expects the UID for deleted operations
+			indexerMessage.Data = data.Member.UID()
+		}
+
+		indexerMessageBuild, errBuildIndexerMessage := indexerMessage.Build(ctx, indexerMessage.Data)
+		if errBuildIndexerMessage != nil {
+			slog.ErrorContext(ctx, "failed to build member indexer message",
+				"error", errBuildIndexerMessage,
+				"action", action,
+			)
+			return nil, errs.NewUnexpected("failed to build member indexer message", errBuildIndexerMessage)
+		}
+		return indexerMessageBuild, nil
 	}
+	committeeIndexerMessageBase, errSetIndexerMessageBase := setIndexerMessage(action, data.Member.CommitteeMemberBase)
+	if errSetIndexerMessageBase != nil {
+		return errSetIndexerMessageBase
+	}
+	committeeIndexerMessageSensitive, errSetIndexerMessageSensitive := setIndexerMessage(action, data.Member.CommitteeMemberSensitive)
+	if errSetIndexerMessageSensitive != nil {
+		return errSetIndexerMessageSensitive
+	}
+	committeeIndexerMessages = append(committeeIndexerMessages, committeeIndexerMessageBase, committeeIndexerMessageSensitive)
+	//
 
 	// Build event message for the member
 	var eventInput any
@@ -787,7 +805,7 @@ func (uc *committeeWriterOrchestrator) publishMemberMessages(ctx context.Context
 	case model.ActionUpdated:
 		// For updates, create the structured event data
 		eventInput = &model.CommitteeMemberUpdateEventData{
-			MemberUID: data.Member.UID,
+			MemberUID: data.Member.UID(),
 			OldMember: data.OldMember,
 			Member:    data.Member,
 		}
@@ -820,9 +838,14 @@ func (uc *committeeWriterOrchestrator) publishMemberMessages(ctx context.Context
 
 	// Publish messages concurrently
 	messages := []func() error{
+		// temporary
 		func() error {
-			return uc.committeePublisher.Indexer(ctx, constants.IndexCommitteeMemberSubject, indexerMessageBuild, sync)
+			return uc.committeePublisher.Indexer(ctx, constants.IndexCommitteeMemberSubject, committeeIndexerMessages[0], sync)
 		},
+		func() error {
+			return uc.committeePublisher.Indexer(ctx, constants.IndexCommitteeMemberSensitiveSubject, committeeIndexerMessages[1], sync)
+		},
+		// temporary
 		func() error {
 			return uc.committeePublisher.Event(ctx, eventMessageBuild.Subject, eventMessageBuild, false)
 		},
@@ -831,7 +854,7 @@ func (uc *committeeWriterOrchestrator) publishMemberMessages(ctx context.Context
 			// Without a username, there's no user identity to grant access to in FGA
 			if data.Member.Username == "" {
 				slog.DebugContext(ctx, "skipping access message for member without username",
-					"member_uid", data.Member.UID,
+					"member_uid", data.Member.UID(),
 					"action", action,
 				)
 				return nil

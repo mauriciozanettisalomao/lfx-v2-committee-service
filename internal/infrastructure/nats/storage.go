@@ -309,7 +309,7 @@ func (s *storage) CreateMember(ctx context.Context, member *model.CommitteeMembe
 		return errs.NewUnexpected("failed to marshal committee member", errMarshal)
 	}
 
-	rev, errCreate := s.client.kvStore[constants.KVBucketNameCommitteeMembers].Create(ctx, member.UID, memberBytes)
+	rev, errCreate := s.client.kvStore[constants.KVBucketNameCommitteeMembers].Create(ctx, member.UID(), memberBytes)
 	if errCreate != nil {
 		return errs.NewUnexpected("failed to create committee member", errCreate)
 	}
@@ -337,10 +337,10 @@ func (s *storage) UpdateMember(ctx context.Context, member *model.CommitteeMembe
 	}
 
 	// Update the committee member using optimistic locking (revision check)
-	newRevision, errUpdate := s.client.kvStore[constants.KVBucketNameCommitteeMembers].Update(ctx, member.UID, memberBytes, revision)
+	newRevision, errUpdate := s.client.kvStore[constants.KVBucketNameCommitteeMembers].Update(ctx, member.UID(), memberBytes, revision)
 	if errUpdate != nil {
 		if errors.Is(errUpdate, jetstream.ErrKeyNotFound) {
-			return nil, errs.NewNotFound("committee member not found", fmt.Errorf("member UID: %s", member.UID))
+			return nil, errs.NewNotFound("committee member not found", fmt.Errorf("member UID: %s", member.UID()))
 		}
 		return nil, errs.NewUnexpected("failed to update committee member", errUpdate)
 	}
@@ -392,7 +392,7 @@ func (s *storage) DeleteMember(ctx context.Context, uid string, revision uint64)
 // to ensure that the member is unique, avoiding concurrent operations for the same member.
 func (s *storage) UniqueMember(ctx context.Context, member *model.CommitteeMember) (string, error) {
 	uniqueKey := fmt.Sprintf(constants.KVLookupMemberPrefix, member.BuildIndexKey(ctx))
-	_, errUnique := s.client.kvStore[constants.KVBucketNameCommitteeMembers].Create(ctx, uniqueKey, []byte(member.UID))
+	_, errUnique := s.client.kvStore[constants.KVBucketNameCommitteeMembers].Create(ctx, uniqueKey, []byte(member.UID()))
 	if errUnique != nil {
 		if errors.Is(errUnique, jetstream.ErrKeyExists) {
 			return uniqueKey, errs.NewConflict("member with the same email already exists in the committee")

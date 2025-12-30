@@ -44,6 +44,7 @@ type CommitteeMemberBase struct {
 
 // CommitteeMemberSensitive represents sensitive committee member information
 type CommitteeMemberSensitive struct {
+	UID   string `json:"uid"`
 	Email string `json:"email"`
 }
 
@@ -66,6 +67,18 @@ type CommitteeMemberOrganization struct {
 	ID      string `json:"id,omitempty"`
 	Name    string `json:"name"`
 	Website string `json:"website,omitempty"`
+}
+
+// UID returns the UID of the committee member, checking both base and sensitive structs.
+// This is necessary because the UID is stored in both structs for different purposes.
+func (cm *CommitteeMember) UID() string {
+	if cm.CommitteeMemberBase.UID != "" {
+		return cm.CommitteeMemberBase.UID
+	}
+	if cm.CommitteeMemberSensitive.UID != "" {
+		return cm.CommitteeMemberSensitive.UID
+	}
+	return ""
 }
 
 // BuildIndexKey generates a SHA-256 hash for use as a NATS KV key.
@@ -104,11 +117,11 @@ func (cm *CommitteeMember) Tags() []string {
 		return nil
 	}
 
-	if cm.UID != "" {
+	if cm.CommitteeMemberBase.UID != "" {
 		// without prefix
-		tags = append(tags, cm.UID)
+		tags = append(tags, cm.CommitteeMemberBase.UID)
 		// with prefix
-		tag := fmt.Sprintf("committee_member_uid:%s", cm.UID)
+		tag := fmt.Sprintf("committee_member_uid:%s", cm.CommitteeMemberBase.UID)
 		tags = append(tags, tag)
 	}
 
