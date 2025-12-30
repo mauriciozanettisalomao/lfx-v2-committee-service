@@ -229,13 +229,15 @@ func TestCommitteeWriterOrchestrator_CreateMember(t *testing.T) {
 			member: &model.CommitteeMember{
 				CommitteeMemberBase: model.CommitteeMemberBase{
 					CommitteeUID: "committee-123",
-					Email:        "test@example.com",
 					Username:     "testuser",
 					FirstName:    "Test",
 					LastName:     "User",
 					Organization: model.CommitteeMemberOrganization{
 						Name: "Test Org",
 					},
+				},
+				CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+					Email: "test@example.com",
 				},
 			},
 			expectError: false,
@@ -255,7 +257,9 @@ func TestCommitteeWriterOrchestrator_CreateMember(t *testing.T) {
 			member: &model.CommitteeMember{
 				CommitteeMemberBase: model.CommitteeMemberBase{
 					CommitteeUID: "nonexistent-committee",
-					Email:        "test@example.com",
+				},
+				CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+					Email: "test@example.com",
 				},
 			},
 			expectError:   true,
@@ -276,11 +280,13 @@ func TestCommitteeWriterOrchestrator_CreateMember(t *testing.T) {
 			member: &model.CommitteeMember{
 				CommitteeMemberBase: model.CommitteeMemberBase{
 					CommitteeUID: "committee-123",
-					Email:        "duplicate@example.com",
 					Username:     "testuser",
 					Organization: model.CommitteeMemberOrganization{
 						Name: "Test Org",
 					},
+				},
+				CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+					Email: "duplicate@example.com",
 				},
 			},
 			expectError:   true,
@@ -321,8 +327,10 @@ func TestCommitteeWriterOrchestrator_CreateMember(t *testing.T) {
 					CommitteeMemberBase: model.CommitteeMemberBase{
 						UID:          uuid.New().String(),
 						CommitteeUID: "committee-123",
-						Email:        "duplicate@example.com",
 						Username:     "firstuser",
+					},
+					CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+						Email: "duplicate@example.com",
 					},
 				}
 				_, _ = memberWriter.UniqueMember(context.Background(), firstMember)
@@ -366,11 +374,13 @@ func TestCommitteeWriterOrchestrator_CreateMember_BusinessEmailValidation(t *tes
 	member := &model.CommitteeMember{
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			CommitteeUID: "committee-business-email",
-			Email:        "test@example.com",
 			Username:     "testuser",
 			Organization: model.CommitteeMemberOrganization{
 				Name: "Test Org",
 			},
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "test@example.com",
 		},
 	}
 
@@ -401,10 +411,12 @@ func TestCommitteeWriterOrchestrator_DeleteMember(t *testing.T) {
 					CommitteeMemberBase: model.CommitteeMemberBase{
 						UID:          "member-123",
 						CommitteeUID: "committee-123",
-						Email:        "test@example.com",
 						Username:     "testuser",
 						CreatedAt:    time.Now(),
 						UpdatedAt:    time.Now(),
+					},
+					CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+						Email: "test@example.com",
 					},
 				}
 				memberWriter.members["member-123"] = member
@@ -439,10 +451,12 @@ func TestCommitteeWriterOrchestrator_DeleteMember(t *testing.T) {
 					CommitteeMemberBase: model.CommitteeMemberBase{
 						UID:          "member-456",
 						CommitteeUID: "committee-123",
-						Email:        "test2@example.com",
 						Username:     "testuser2",
 						CreatedAt:    time.Now(),
 						UpdatedAt:    time.Now(),
+					},
+					CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+						Email: "test2@example.com",
 					},
 				}
 				memberWriter.members["member-456"] = member
@@ -495,8 +509,10 @@ func TestCommitteeWriterOrchestrator_deleteMemberKeys(t *testing.T) {
 	member := &model.CommitteeMember{
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-to-delete",
-			Email:        "delete@example.com",
 			CommitteeUID: "committee-123",
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "delete@example.com",
 		},
 	}
 	memberWriter.members["member-to-delete"] = member
@@ -577,8 +593,10 @@ func TestCommitteeWriterOrchestrator_publishMemberMessages(t *testing.T) {
 					CommitteeMemberBase: model.CommitteeMemberBase{
 						UID:          "member-123",
 						CommitteeUID: "committee-123",
-						Email:        "test@example.com",
 						Username:     "testuser",
+					},
+					CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+						Email: "test@example.com",
 					},
 				},
 			},
@@ -591,16 +609,20 @@ func TestCommitteeWriterOrchestrator_publishMemberMessages(t *testing.T) {
 					CommitteeMemberBase: model.CommitteeMemberBase{
 						UID:          "member-456",
 						CommitteeUID: "committee-123",
-						Email:        "updated@example.com",
 						Username:     "updateduser",
+					},
+					CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+						Email: "updated@example.com",
 					},
 				},
 				OldMember: &model.CommitteeMember{
 					CommitteeMemberBase: model.CommitteeMemberBase{
 						UID:          "member-456",
 						CommitteeUID: "committee-123",
-						Email:        "old@example.com",
 						Username:     "olduser",
+					},
+					CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+						Email: "old@example.com",
 					},
 				},
 			},
@@ -613,8 +635,10 @@ func TestCommitteeWriterOrchestrator_publishMemberMessages(t *testing.T) {
 					CommitteeMemberBase: model.CommitteeMemberBase{
 						UID:          "member-789",
 						CommitteeUID: "committee-123",
-						Email:        "deleted@example.com",
 						Username:     "deleteduser",
+					},
+					CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+						Email: "deleted@example.com",
 					},
 				},
 			},
@@ -651,11 +675,13 @@ func TestCommitteeWriterOrchestrator_CreateMember_RollbackOnError(t *testing.T) 
 	member := &model.CommitteeMember{
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			CommitteeUID: "nonexistent-committee",
-			Email:        "test@example.com",
 			Username:     "testuser",
 			Organization: model.CommitteeMemberOrganization{
 				Name: "Test Org",
 			},
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "test@example.com",
 		},
 	}
 
@@ -685,11 +711,13 @@ func TestCommitteeWriterOrchestrator_CreateMember_SettingsNotFound(t *testing.T)
 	member := &model.CommitteeMember{
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			CommitteeUID: "committee-no-settings",
-			Email:        "test@example.com",
 			Username:     "testuser",
 			Organization: model.CommitteeMemberOrganization{
 				Name: "Test Org",
 			},
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "test@example.com",
 		},
 	}
 
@@ -709,7 +737,6 @@ func TestCommitteeWriterOrchestrator_DeleteMember_CompleteFlow(t *testing.T) {
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-complete",
 			CommitteeUID: "committee-123",
-			Email:        "complete@example.com",
 			Username:     "completeuser",
 			FirstName:    "Complete",
 			LastName:     "User",
@@ -718,6 +745,9 @@ func TestCommitteeWriterOrchestrator_DeleteMember_CompleteFlow(t *testing.T) {
 			},
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "complete@example.com",
 		},
 	}
 
@@ -752,8 +782,10 @@ func TestCommitteeWriterOrchestrator_DeleteMember_MessagePublishingFailure(t *te
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-msg-fail",
 			CommitteeUID: "committee-123",
-			Email:        "msgfail@example.com",
 			Username:     "msgfailuser",
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "msgfail@example.com",
 		},
 	}
 
@@ -792,7 +824,6 @@ func TestCommitteeWriterOrchestrator_UpdateMember_Success(t *testing.T) {
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "committee-123",
-			Email:        "old@example.com",
 			Username:     "olduser",
 			FirstName:    "Old",
 			LastName:     "User",
@@ -801,6 +832,9 @@ func TestCommitteeWriterOrchestrator_UpdateMember_Success(t *testing.T) {
 			},
 			CreatedAt: time.Now().Add(-time.Hour),
 			UpdatedAt: time.Now().Add(-time.Hour),
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "old@example.com",
 		},
 	}
 
@@ -816,13 +850,15 @@ func TestCommitteeWriterOrchestrator_UpdateMember_Success(t *testing.T) {
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "committee-123",
-			Email:        "new@example.com", // Email changed
-			Username:     "newuser",         // Username changed
+			Username:     "newuser", // Username changed
 			FirstName:    "New",
 			LastName:     "User",
 			Organization: model.CommitteeMemberOrganization{
 				Name: "New Org", // Organization changed
 			},
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "new@example.com", // Email changed
 		},
 	}
 
@@ -862,8 +898,10 @@ func TestCommitteeWriterOrchestrator_UpdateMember_RevisionMismatch(t *testing.T)
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "committee-123",
-			Email:        "test@example.com",
 			Username:     "testuser",
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "test@example.com",
 		},
 	}
 	memberWriter.members["member-123"] = existingMember
@@ -873,7 +911,9 @@ func TestCommitteeWriterOrchestrator_UpdateMember_RevisionMismatch(t *testing.T)
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "committee-123",
-			Email:        "updated@example.com",
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "updated@example.com",
 		},
 	}
 
@@ -893,7 +933,9 @@ func TestCommitteeWriterOrchestrator_UpdateMember_MemberNotFound(t *testing.T) {
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "nonexistent-member",
 			CommitteeUID: "committee-123",
-			Email:        "test@example.com",
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "test@example.com",
 		},
 	}
 
@@ -914,7 +956,9 @@ func TestCommitteeWriterOrchestrator_UpdateMember_CommitteeNotFound(t *testing.T
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "committee-123",
-			Email:        "test@example.com",
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "test@example.com",
 		},
 	}
 	// Add member to mock repository (this is what the orchestrator will read from)
@@ -928,7 +972,9 @@ func TestCommitteeWriterOrchestrator_UpdateMember_CommitteeNotFound(t *testing.T
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "nonexistent-committee",
-			Email:        "updated@example.com",
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "updated@example.com",
 		},
 	}
 
@@ -962,11 +1008,13 @@ func TestCommitteeWriterOrchestrator_UpdateMember_EmailChangeWithCorporateValida
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "committee-123",
-			Email:        "old@example.com",
 			Username:     "testuser",
 			Organization: model.CommitteeMemberOrganization{
 				Name: "Test Org",
 			},
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "old@example.com",
 		},
 	}
 	memberWriter.members["member-123"] = existingMember
@@ -978,11 +1026,13 @@ func TestCommitteeWriterOrchestrator_UpdateMember_EmailChangeWithCorporateValida
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "committee-123",
-			Email:        "new@corporate.com", // Email changed
 			Username:     "testuser",
 			Organization: model.CommitteeMemberOrganization{
 				Name: "Test Org",
 			},
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "new@corporate.com", // Email changed
 		},
 	}
 
@@ -1013,7 +1063,9 @@ func TestCommitteeWriterOrchestrator_UpdateMember_EmailAlreadyExists(t *testing.
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "committee-123",
-			Email:        "member1@example.com",
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "member1@example.com",
 		},
 	}
 	memberWriter.members["member-123"] = existingMember1
@@ -1024,7 +1076,9 @@ func TestCommitteeWriterOrchestrator_UpdateMember_EmailAlreadyExists(t *testing.
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-456",
 			CommitteeUID: "committee-123",
-			Email:        "member2@example.com",
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "member2@example.com",
 		},
 	}
 	memberWriter.members["member-456"] = existingMember2
@@ -1039,7 +1093,9 @@ func TestCommitteeWriterOrchestrator_UpdateMember_EmailAlreadyExists(t *testing.
 		CommitteeMemberBase: model.CommitteeMemberBase{
 			UID:          "member-123",
 			CommitteeUID: "committee-123",
-			Email:        "member2@example.com", // Email already used by member-456
+		},
+		CommitteeMemberSensitive: model.CommitteeMemberSensitive{
+			Email: "member2@example.com", // Email already used by member-456
 		},
 	}
 
