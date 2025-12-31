@@ -489,7 +489,7 @@ func (w *MockCommitteeWriter) UpdateSetting(ctx context.Context, settings *model
 
 // CreateMember creates a new committee member
 func (w *MockCommitteeWriter) CreateMember(ctx context.Context, member *model.CommitteeMember) error {
-	slog.DebugContext(ctx, "mock committee writer: creating committee member", "member_uid", member.UID(), "email", member.Email)
+	slog.DebugContext(ctx, "mock committee writer: creating committee member", "member_uid", member.UID, "email", member.Email)
 
 	// Generate UID if not set
 	if member.CommitteeMemberBase.UID == "" {
@@ -517,16 +517,16 @@ func (w *MockCommitteeWriter) CreateMember(ctx context.Context, member *model.Co
 	}
 
 	// Store member
-	w.mock.committeeMembers[committeeUID][member.UID()] = member
+	w.mock.committeeMembers[committeeUID][member.UID] = member
 	w.mock.memberIndexKeys[committeeUID][member.BuildIndexKey(ctx)] = member
-	w.mock.memberRevisions[member.UID()] = 1
+	w.mock.memberRevisions[member.UID] = 1
 
 	return nil
 }
 
 // UpdateMember updates an existing committee member
 func (w *MockCommitteeWriter) UpdateMember(ctx context.Context, member *model.CommitteeMember, revision uint64) (*model.CommitteeMember, error) {
-	slog.DebugContext(ctx, "mock committee writer: updating committee member", "member_uid", member.UID(), "revision", revision)
+	slog.DebugContext(ctx, "mock committee writer: updating committee member", "member_uid", member.UID, "revision", revision)
 
 	w.mock.mu.Lock()
 	defer w.mock.mu.Unlock()
@@ -534,23 +534,23 @@ func (w *MockCommitteeWriter) UpdateMember(ctx context.Context, member *model.Co
 	// Find the member across all committees
 	var foundCommitteeUID string
 	for committeeUID, committeeMembers := range w.mock.committeeMembers {
-		if _, exists := committeeMembers[member.UID()]; exists {
+		if _, exists := committeeMembers[member.UID]; exists {
 			foundCommitteeUID = committeeUID
 			break
 		}
 	}
 
 	if foundCommitteeUID == "" {
-		return nil, errors.NewNotFound(fmt.Sprintf("member with UID %s not found", member.UID()))
+		return nil, errors.NewNotFound(fmt.Sprintf("member with UID %s not found", member.UID))
 	}
 
 	member.UpdatedAt = time.Now()
-	w.mock.committeeMembers[foundCommitteeUID][member.UID()] = member
+	w.mock.committeeMembers[foundCommitteeUID][member.UID] = member
 	w.mock.memberIndexKeys[foundCommitteeUID][member.BuildIndexKey(ctx)] = member
 
 	// Update revision
-	currentRevision := w.mock.memberRevisions[member.UID()]
-	w.mock.memberRevisions[member.UID()] = currentRevision + 1
+	currentRevision := w.mock.memberRevisions[member.UID]
+	w.mock.memberRevisions[member.UID] = currentRevision + 1
 
 	return member, nil
 }
@@ -590,7 +590,7 @@ func (w *MockCommitteeWriter) DeleteMember(ctx context.Context, memberUID string
 
 // UniqueMember verifies if a member is unique (based on email or other unique identifiers)
 func (w *MockCommitteeWriter) UniqueMember(ctx context.Context, member *model.CommitteeMember) (string, error) {
-	slog.DebugContext(ctx, "mock committee writer: checking member uniqueness", "member_uid", member.UID(), "email", member.Email)
+	slog.DebugContext(ctx, "mock committee writer: checking member uniqueness", "member_uid", member.UID, "email", member.Email)
 
 	w.mock.mu.RLock()
 	defer w.mock.mu.RUnlock()
@@ -598,9 +598,9 @@ func (w *MockCommitteeWriter) UniqueMember(ctx context.Context, member *model.Co
 	// Check across all committees for existing member with same email
 	for _, committeeMembers := range w.mock.committeeMembers {
 		for _, existing := range committeeMembers {
-			if existing.Email == member.Email && existing.UID() != member.UID() {
+			if existing.Email == member.Email && existing.UID != member.UID {
 				// Return conflict error to indicate non-uniqueness
-				return existing.UID(), errors.NewConflict(fmt.Sprintf("member with email %s already exists", member.Email))
+				return existing.UID, errors.NewConflict(fmt.Sprintf("member with email %s already exists", member.Email))
 			}
 		}
 	}
@@ -756,9 +756,9 @@ func (m *MockRepository) AddCommitteeMember(committeeUID string, member *model.C
 		m.memberIndexKeys[committeeUID] = make(map[string]*model.CommitteeMember)
 	}
 
-	m.committeeMembers[committeeUID][member.UID()] = member
+	m.committeeMembers[committeeUID][member.UID] = member
 	m.memberIndexKeys[committeeUID][member.BuildIndexKey(context.Background())] = member
-	m.memberRevisions[member.UID()] = 1
+	m.memberRevisions[member.UID] = 1
 }
 
 // GetCommitteeMemberCount returns the total number of members for a committee
