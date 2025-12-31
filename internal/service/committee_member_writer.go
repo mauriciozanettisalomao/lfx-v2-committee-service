@@ -75,7 +75,7 @@ func (uc *committeeWriterOrchestrator) CreateMember(ctx context.Context, member 
 	)
 
 	now := time.Now()
-	member.CommitteeMemberBase.UID = uuid.New().String()
+	member.UID = uuid.New().String()
 	member.CreatedAt = now
 	member.UpdatedAt = now
 
@@ -486,7 +486,7 @@ func (uc *committeeWriterOrchestrator) UpdateMember(ctx context.Context, member 
 
 	// Step 7: Merge existing data with updated fields
 	// Preserve immutable fields
-	member.CommitteeMemberBase.UID = existing.UID
+	member.UID = existing.UID
 	member.CreatedAt = existing.CreatedAt
 	member.UpdatedAt = time.Now()
 

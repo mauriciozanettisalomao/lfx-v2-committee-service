@@ -189,12 +189,12 @@ func NewMockRepository() *MockRepository {
 		// Add members to committee-1
 		mock.committeeMembers["committee-1"] = make(map[string]*model.CommitteeMember)
 		mock.memberIndexKeys["committee-1"] = make(map[string]*model.CommitteeMember)
-		mock.committeeMembers["committee-1"][sampleMember1.CommitteeMemberBase.UID] = sampleMember1
-		mock.committeeMembers["committee-1"][sampleMember2.CommitteeMemberBase.UID] = sampleMember2
+		mock.committeeMembers["committee-1"][sampleMember1.UID] = sampleMember1
+		mock.committeeMembers["committee-1"][sampleMember2.UID] = sampleMember2
 		mock.memberIndexKeys["committee-1"][sampleMember1.BuildIndexKey(ctx)] = sampleMember1
 		mock.memberIndexKeys["committee-1"][sampleMember2.BuildIndexKey(ctx)] = sampleMember2
-		mock.memberRevisions[sampleMember1.CommitteeMemberBase.UID] = 1
-		mock.memberRevisions[sampleMember2.CommitteeMemberBase.UID] = 1
+		mock.memberRevisions[sampleMember1.UID] = 1
+		mock.memberRevisions[sampleMember2.UID] = 1
 
 		globalMockRepo = mock
 	})
@@ -492,8 +492,8 @@ func (w *MockCommitteeWriter) CreateMember(ctx context.Context, member *model.Co
 	slog.DebugContext(ctx, "mock committee writer: creating committee member", "member_uid", member.UID, "email", member.Email)
 
 	// Generate UID if not set
-	if member.CommitteeMemberBase.UID == "" {
-		member.CommitteeMemberBase.UID = uuid.New().String()
+	if member.UID == "" {
+		member.UID = uuid.New().String()
 	}
 
 	now := time.Now()
