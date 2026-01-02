@@ -490,10 +490,9 @@ func (s *committeeServicesrvc) convertMemberDomainToFullResponse(member *model.C
 		return nil
 	}
 
-	memberUID := member.UID
 	result := &committeeservice.CommitteeMemberFullWithReadonlyAttributes{
 		CommitteeUID: &member.CommitteeUID,
-		UID:          &memberUID,
+		UID:          &member.UID,
 		Email:        &member.Email,
 		AppointedBy:  member.AppointedBy,
 		Status:       member.Status,
