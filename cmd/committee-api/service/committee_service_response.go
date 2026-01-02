@@ -628,6 +628,61 @@ func (s *committeeServicesrvc) convertMemberDomainBasicResponse(member *model.Co
 		result.CommitteeCategory = &member.CommitteeCategory
 	}
 
+	// Handle Role mapping - only include if role has meaningful data
+	if member.Role.Name != "" {
+		role := &struct {
+			Name      string
+			StartDate *string
+			EndDate   *string
+		}{
+			Name: member.Role.Name,
+		}
+		if member.Role.StartDate != "" {
+			role.StartDate = &member.Role.StartDate
+		}
+		if member.Role.EndDate != "" {
+			role.EndDate = &member.Role.EndDate
+		}
+		result.Role = role
+	}
+
+	// Handle Voting mapping - only include if voting has meaningful data
+	if member.Voting.Status != "" {
+		voting := &struct {
+			Status    string
+			StartDate *string
+			EndDate   *string
+		}{
+			Status: member.Voting.Status,
+		}
+		if member.Voting.StartDate != "" {
+			voting.StartDate = &member.Voting.StartDate
+		}
+		if member.Voting.EndDate != "" {
+			voting.EndDate = &member.Voting.EndDate
+		}
+		result.Voting = voting
+	}
+
+	// Handle Organization mapping - only include if organization has meaningful data
+	if member.Organization.ID != "" || member.Organization.Name != "" || member.Organization.Website != "" {
+		org := &struct {
+			ID      *string
+			Name    *string
+			Website *string
+		}{}
+		if member.Organization.ID != "" {
+			org.ID = &member.Organization.ID
+		}
+		if member.Organization.Name != "" {
+			org.Name = &member.Organization.Name
+		}
+		if member.Organization.Website != "" {
+			org.Website = &member.Organization.Website
+		}
+		result.Organization = org
+	}
+
 	// Convert timestamps to strings if they exist
 	if !member.CreatedAt.IsZero() {
 		createdAt := member.CreatedAt.Format("2006-01-02T15:04:05Z07:00")
