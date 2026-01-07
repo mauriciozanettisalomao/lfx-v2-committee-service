@@ -238,6 +238,10 @@ func (uc *committeeWriterOrchestrator) buildAccessControlMessage(ctx context.Con
 		message.Relations[constants.RelationAuditor] = committee.Auditors
 	}
 
+	if committee.CommitteeSettings != nil && committee.IsMemberVisibilityBasicProfile() {
+		message.Self = append(message.Self, constants.RelationSelfForMemberBasicProfileAccess)
+	}
+
 	slog.DebugContext(ctx, "building access control message",
 		"message", message,
 	)
