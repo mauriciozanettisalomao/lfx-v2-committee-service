@@ -164,5 +164,5 @@ func (c *Committee) IsMemberVisibilityBasicProfile() bool {
 		return false
 	}
 
-	return c.CommitteeSettings.MemberVisibility == memberVisibilityBasicProfileSetting
+	return c.MemberVisibility == memberVisibilityBasicProfileSetting
 }
