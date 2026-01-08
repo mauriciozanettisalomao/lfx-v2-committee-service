@@ -593,9 +593,9 @@ func BenchmarkCommitteeTags_Parallel(b *testing.B) {
 
 func TestCommitteeIsMemberVisibilityBasicProfile(t *testing.T) {
 	tests := []struct {
-		name     string
+		name      string
 		committee Committee
-		expected bool
+		expected  bool
 	}{
 		{
 			name: "returns true when member visibility is basic_profile",
