@@ -109,7 +109,8 @@ type CommitteeAccessMessage struct {
 	// e.g. "project" and it's value is the project UID.
 	// e.g. "parent" and it's value is the parent UID.
 	References map[string]string `json:"references"`
-	// self is used to store the self relation of the object, e.g. for committee members to access their own basic profile info.
+	// Self stores OpenFGA self-relation tuples that enable conditional member-to-member visibility.
+	// When populated, members can view other members' basic profiles based on committee visibility settings.
 	Self []string `json:"self"`
 }
 

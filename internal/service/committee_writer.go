@@ -228,6 +228,7 @@ func (uc *committeeWriterOrchestrator) buildAccessControlMessage(ctx context.Con
 			// project is required in the flow
 			constants.RelationProject: committee.ProjectUID,
 		},
+		Self: []string{},
 	}
 
 	if committee.CommitteeSettings != nil && len(committee.Writers) > 0 {
